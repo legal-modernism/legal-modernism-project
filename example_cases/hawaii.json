@@ -1,0 +1,44 @@
+{
+    "casebody": {
+        "data": "<casebody firstpage=\"562\" lastpage=\"562\" xmlns=\"http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1\">\n  <citation id=\"AH6N\">394 P.3d 792</citation>\n  <parties id=\"ACdn\">STATE of Hawai'i, Plaintiff-Appellant, v. James W. TUCKER, Jr., Defendant-Appellee.</parties>\n  <docketnumber id=\"AIQ6\">NO. CAAP-16-0000545</docketnumber>\n  <court id=\"Arce\">Intermediate Court of Appeals of Hawai'i.</court>\n  <decisiondate id=\"A2oq\">May 26, 2017</decisiondate>\n  <opinion type=\"majority\">\n    <p id=\"Acey\">APPEAL PROM THE CIRCUIT COURT OP THE FIRST CIRCUIT (CR. NO. 16-1-1786)</p>\n    <p id=\"AvAY\">SUMMARY DISPOSITION ORDER</p>\n    <p id=\"Ad8\">Vacate. Remand.</p>\n  </opinion>\n</casebody>\n",
+        "status": "ok"
+    },
+    "citations": [
+        {
+            "cite": "139 Haw. 562",
+            "type": "official"
+        },
+        {
+            "cite": "394 P.3d 792",
+            "type": "parallel"
+        }
+    ],
+    "court": {
+        "id": 14933,
+        "jurisdiction_url": null,
+        "name": "Hawaii Intermediate Court of Appeals",
+        "name_abbreviation": "Haw. Ct. App.",
+        "slug": "haw-ct-app"
+    },
+    "decision_date": "2017-05-26",
+    "docket_number": "NO. CAAP-16-0000545",
+    "first_page": "562",
+    "frontend_url": "https://cite.capapi.org/haw/139/562/12315498/",
+    "id": 12315498,
+    "jurisdiction": {
+        "id": 40,
+        "name": "Haw.",
+        "name_long": "Hawaii",
+        "slug": "haw",
+        "whitelisted": false
+    },
+    "last_page": "562",
+    "name": "STATE of Hawai'i, Plaintiff-Appellant, v. James W. TUCKER, Jr., Defendant-Appellee",
+    "name_abbreviation": "State v. Tucker",
+    "reporter": {
+        "full_name": "West's Hawaii Reports"
+    },
+    "volume": {
+        "volume_number": "139"
+    }
+}

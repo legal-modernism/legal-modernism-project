@@ -1,0 +1,40 @@
+{
+    "casebody": {
+        "data": "<casebody firstpage=\"114\" lastpage=\"115\" xmlns=\"http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1\">\n  <parties id=\"b122-5\">PAPU SIOFELE et al., Plaintiffs, v. VAN CAMP et al., Defendants.</parties>\n  <court id=\"b122-8\">High Court of American Samoa Trial Division</court>\n  <docketnumber id=\"b122-9\">CA No. 62-79</docketnumber>\n  <decisiondate id=\"AXX\">October 11, 1983</decisiondate>\n  <opinion type=\"majority\">\n    <author id=\"b122-11\">GARDNER, Chief Justice.</author>\n    <p id=\"b122-12\">* * *</p>\n    <p id=\"b122-13\">However, the court does find that the Defendant Starkist has committed a nuisance. By the emission of foul, sickening and noxious odors from its reduction plant it has unreasonably interfered with the full use and enjoyment by plaintiffs of their land. Mr. Gregory, with commendable loyalty to his employer, felt these odors emitted from Starkist were not dissimilar to those in a kitchen when fish are being cooked. However, the overwhelming evidence is that from time to time the odors were dreadful. Mr. Gregory had to admit that when there was a breakdown in the rendering plant the odors did become somewhat stronger. Unless one were completely bereft of his olfactory senses anyone ever exposed to that smell would have to agree. The existence of a nuisance was well established.</p>\n    <p id=\"b122-16\">There was agreement by all. concerned that the causes of the bad odors were frequent equipment breakdowns in the reduction plant as a result of which piles of fish residue accumulated and stank. Starkist now has plans for improvements in this phase of its operation with the replacement of <page-number citation-index=\"1\" label=\"115\">*115</page-number>inadquate, obsolete and antiquated equipment. Starkist assured the court that these improvements will do away with the foul odors pow resulting} frpip these breakdoYns. This new equipment is to be installed by December 1983 pr January 1984.<footnotemark>1</footnotemark></p>\n    <p id=\"b123-2\">* -a</p>\n    <p id=\"b123-3\">The court believes that the Plaintiffs were driven from their home by reason of these noxious odors.. However, the court.'does not believe their testimony that they are paying a son $600. of their $1,0Q0 monthly income as rent.</p>\n    <p id=\"b123-4\">When the Plaintiffs were forced to vacate their premises by reason of these odors, it must be remembered that they left' a tumbledown ^hack. They could not then move into the Mouna Kea Hotel at $250 per day and aspect the Defendant to pick up their hotel tab. They are entitled to live in similar premises. The court feels that $50,00 per month is reasonable amount of rent for similar premises. Thus, Plaintiffs are entitled to $5Q.Q0 per month for the period 1976 to 1983 for a total of $4,200.00 to the present plus $50.00 a month until the nuisance is abatpd.</p>\n    <p id=\"b123-5\">There remains the problem of abating this continuing' <em>nuisancet </em>Starkist has plans for improvements that they allege will pure this problem. These are to be installed by December 1983 or January 1984, The cpurt will order that this nuisance be abated .by Wednesday, February 1, 1984 or thpt Starkist show cause in this court on that'date why injunctive relief<footnotemark>1</footnotemark> shopld not be granted by way of stopping the operation of the reduction plant op taking any other steps necessary to abate this nuisance.</p>\n    <footnote label=\"1\">\n      <p id=\"b123-6\">. It is high time Starkist does something constructive abput tfiis problem. Each year they obtain from the Government a tax exemptipn ip vfhicfy they agree to \"eliminate odors to the best of their ability.\" If Van JCapip has the ability, Starkist has too. The inaction of the Government of American Samoa during the years is puzzling.</p>\n    </footnote>\n  </opinion>\n</casebody>\n",
+        "status": "ok"
+    },
+    "citations": [
+        {
+            "cite": "1 Am. Samoa 2d 114",
+            "type": "official"
+        }
+    ],
+    "court": {
+        "id": 8768,
+        "jurisdiction_url": null,
+        "name": "High Court of American Samoa",
+        "name_abbreviation": "Am. Samoa",
+        "slug": "am-samoa"
+    },
+    "decision_date": "1983-10-11",
+    "docket_number": "CA No. 62-79",
+    "first_page": "114",
+    "frontend_url": "https://cite.capapi.org/am-samoa-2d/1/114/",
+    "id": 11987450,
+    "jurisdiction": {
+        "id": 58,
+        "name": "Am. Samoa",
+        "name_long": "American Samoa",
+        "slug": "am-samoa",
+        "whitelisted": false
+    },
+    "last_page": "115",
+    "name": "PAPU SIOFELE et al., Plaintiffs, v. VAN CAMP et al., Defendants",
+    "name_abbreviation": "Siofele v. Van Camp",
+    "reporter": {
+        "full_name": "American Samoa Reports 2d"
+    },
+    "volume": {
+        "volume_number": "1"
+    }
+}

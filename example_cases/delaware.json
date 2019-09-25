@@ -1,0 +1,40 @@
+{
+    "casebody": {
+        "data": "<casebody firstpage=\"622\" lastpage=\"622\" xmlns=\"http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1\">\n  <parties id=\"b676-12\">Michael BROOMER, Defendant Below, Appellant, v. STATE of Delaware, Plaintiff Below, Appellee.</parties>\n  <docketnumber id=\"b676-15\">No. 562, 2016</docketnumber>\n  <court id=\"b676-16\">Supreme Court of Delaware.</court>\n  <otherdate id=\"b676-17\">Submitted: November 14, 2017</otherdate>\n  <decisiondate id=\"A7TQ\">Decided: November 28, 2017</decisiondate>\n  <opinion type=\"majority\">\n    <p id=\"b676-18\">Court Below: Superior Court of the State of Delaware</p>\n    <p id=\"b676-19\">AFFIRMED.</p>\n  </opinion>\n</casebody>\n",
+        "status": "ok"
+    },
+    "citations": [
+        {
+            "cite": "175 A.3d 622",
+            "type": "official"
+        }
+    ],
+    "court": {
+        "id": 9322,
+        "jurisdiction_url": null,
+        "name": "Delaware Supreme Court",
+        "name_abbreviation": "Del.",
+        "slug": "del-2"
+    },
+    "decision_date": "2017-11-28",
+    "docket_number": "No. 562, 2016",
+    "first_page": "622",
+    "frontend_url": "https://cite.capapi.org/a3d/175/622/12422472/",
+    "id": 12422472,
+    "jurisdiction": {
+        "id": 8,
+        "name": "Del.",
+        "name_long": "Delaware",
+        "slug": "del",
+        "whitelisted": false
+    },
+    "last_page": "622",
+    "name": "Michael BROOMER, Defendant Below, Appellant, v. STATE of Delaware, Plaintiff Below, Appellee",
+    "name_abbreviation": "Broomer v. State",
+    "reporter": {
+        "full_name": "West's Atlantic Reporter, Third Series"
+    },
+    "volume": {
+        "volume_number": "175"
+    }
+}

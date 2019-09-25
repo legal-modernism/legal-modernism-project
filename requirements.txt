@@ -1,0 +1,7 @@
+psycopg2_binary==2.8.3
+requests==2.18.4
+pandas==0.25.1
+environs==5.2.1
+numpy==1.17.2
+lxml==4.2.1
+psycopg2==2.8.3

@@ -1,0 +1,40 @@
+{
+    "casebody": {
+        "data": "<casebody firstpage=\"673\" lastpage=\"673\" xmlns=\"http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1\">\n  <parties id=\"b705-6\">Myrtle E. Brown, appellee, v. American Benefit Life Insurance Company, formerly Merchants &amp; Bankers Life Insurance Company, appellant.</parties>\n  <decisiondate id=\"Acm8\">Opinion filed March 2, 1928.</decisiondate>\n  <attorneys id=\"b705-8\">Gillespie, Burke &amp; Gillespie, for appellant; Parker &amp; Bauer, Louis P. Gillespie and Hugh J. Dobbs, of counsel. G. P. Denton and Paul Taylor, for appellee.</attorneys>\n  <opinion type=\"majority\">\n    <author id=\"b705-9\">Mr. Justice Wolfe</author>\n    <p id=\"AD1Z\">delivered the opinion of the court.</p>\n  </opinion>\n</casebody>\n",
+        "status": "ok"
+    },
+    "citations": [
+        {
+            "cite": "248 Ill. App. 673",
+            "type": "official"
+        }
+    ],
+    "court": {
+        "id": 8837,
+        "jurisdiction_url": null,
+        "name": "Illinois Appellate Court",
+        "name_abbreviation": "Ill. App. Ct.",
+        "slug": "ill-app-ct"
+    },
+    "decision_date": "1928-03-02",
+    "docket_number": "",
+    "first_page": "673",
+    "frontend_url": "https://cite.capapi.org/ill-app/248/673/",
+    "id": 12255945,
+    "jurisdiction": {
+        "id": 29,
+        "name": "Ill.",
+        "name_long": "Illinois",
+        "slug": "ill",
+        "whitelisted": true
+    },
+    "last_page": "673",
+    "name": "Myrtle E. Brown, appellee, v. American Benefit Life Insurance Company, formerly Merchants & Bankers Life Insurance Company, appellant",
+    "name_abbreviation": "Brown v. American Benefit Life Insurance",
+    "reporter": {
+        "full_name": "Illinois Appellate Court Reports"
+    },
+    "volume": {
+        "volume_number": "248"
+    }
+}
