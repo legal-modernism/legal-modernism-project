@@ -48,9 +48,14 @@ CREATE TABLE Opinions (
 
 CREATE TABLE Parties (
     parties_id VARCHAR(256),
+    case_id VARCHAR(256),
     client_A VARCHAR(256),
     client_B VARCHAR(256),
-    PRIMARY KEY (parties_id)
+    PRIMARY KEY (parties_id),
+    FOREIGN KEY (case_id)
+        REFERENCES Cases
+            ON DELETE CASCADE
+            ON UPDATE SET DEFAULT
 )
 
 CREATE TABLE Courts (
@@ -83,13 +88,12 @@ CREATE TABLE Jurisdiction (
 
 CREATE TABLE Attorneys (
     attorney_id VARCHAR(256),
-    attorney_name VARCHAR(256),
+    attorneys VARCHAR(256),
     PRIMARY KEY (attorney_id)
 )
 
 CREATE TABLE Attorneys_Of (
     attorneys_id VARCHAR(256),
-    attorneys VARCHAR(256),
     case_id VARCHAR(256),
     FOREIGN KEY (attorney_id)
         REFERENCES Attorneys
@@ -102,14 +106,13 @@ CREATE TABLE Attorneys_Of (
 )
 
 CREATE TABLE Judges (
-    judge_id VARCHAR(256),
-    judge_name VARCHAR(256),
+    judges_id VARCHAR(256),
+    judges VARCHAR(256),
     PRIMARY KEY (judge_id)
 )
 
 CREATE TABLE Judges_Of (
     judges_id VARCHAR(256),
-    judges VARCHAR(256),
     case_id VARCHAR(256),
     FOREIGN KEY (judge_id)
         REFERENCES Judges
