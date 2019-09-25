@@ -8,29 +8,24 @@ Created on 15 Sep
 # Case Law Access Project
 ### Source: https://case.law
 ### Learn how to access bulk data here: https://case.law/bulk/
+
 """
 import numpy as np
 import pandas as pd
 import requests
-import zipfile, io
-import urllib.request
-import urllib
 import os
 
 import lzma
 import json
 import lxml.etree as etree
-import xml.etree.ElementTree as ET
-import xml.dom.minidom
 
-from io import BytesIO
 from zipfile import ZipFile
-from urllib.request import urlopen
-from os import listdir
-from os.path import isfile, join
 from environs import Env
 
 def download_cap_data():
+    """
+    Requests data from caselaw and stores it in ../data/
+    """
     # Read environment variables from .env file
     env = Env()
     env.read_env()
@@ -68,35 +63,41 @@ def download_cap_data():
         # Check
         print('{} {}'.format(download_filename, download_url))
 
-        # TODO: Check if the file has been downloaded already
+        # check if file exists
+        file_exists = os.path.exists('../data/'+download_filename)
 
-        # Request the file
-        download_request = requests.get(
-            download_url,
-            headers={'Authorization': 'Token e3db7dd707ff11888ac0da88153ab3a4470944bd'}
-        )
+        if file_exists:
+            print(download_filename+' already exists.')
+        else:
+            # Request the file
+            download_request = requests.get(
+                download_url,
+                headers={'Authorization': 'Token e3db7dd707ff11888ac0da88153ab3a4470944bd'}
+            )
 
-        # save file in ../data/*
-        with open('../data/'+download_filename, 'wb') as f:
-            f.write(download_request.content)
+            # Download the file
+            # save file in ../data/*
+            file_dir = os.path.join('../data/', download_filename)
 
-        # Unzip the file
-        with ZipFile('../data/'+download_filename, 'r') as zip:
-            # printing all the contents of the zip file
-            zip.printdir()
+            with open(file_dir, 'wb') as f:
+                f.write(download_request.content)
 
-            # extracting all the files
-            print('Extracting all the files now...')
-            zip.extractall(path='../data/')
-            print('Done!')
+            # Unzip the file
+            with ZipFile('../data/'+download_filename, 'r') as zip:
+                # printing all the contents of the zip file
+                zip.printdir()
+
+                # extracting all the files
+                print('Extracting all the files now...')
+                zip.extractall(path='../data/')
+                print('Done!')
 
 def print_case(case_name):
+    """
+    Utility function to pretty print a case.
+    """
 
-    filepath = '../data/'
-
-    filepath = case_name
-
-    filepath += '/data/data.jsonl.xz'
+    filepath = os.path.join('../data/', case_name, 'data', 'data.jsonl.xz')
 
     with lzma.open(filepath) as in_file:
         for line in in_file:
@@ -104,7 +105,7 @@ def print_case(case_name):
 
     # Print pretty the JSON file
     print(json.dumps(case, indent=4, sort_keys=True))
-
+    print('\n')
     # Access the casebody string
     casebody = case["casebody"]["data"]
 
@@ -116,15 +117,16 @@ def print_case(case_name):
 
     # Print Pretty the XML File
     print(etree.tostring(root, pretty_print=True).decode())
+    print('\n')
 
 if __name__ == "__main__":
 
     # Fetch data
-    #download_cap_data()
+    download_cap_data()
 
     # Print subfolers
-    subfolders = [f.path for f in os.scandir('../data/') if f.is_dir() ]
-    print(subfolders)
+    #subfolders = [f.path for f in os.scandir('../data/') if f.is_dir() ]
+    #print(subfolders)
 
     # Example public data
     #case_name = 'New Mexico-20190723-xml'
@@ -136,7 +138,7 @@ if __name__ == "__main__":
     #case_name = 'Dakota Territory-20190718-xml'
     #case_name = 'Hawaii-20190718-xml'
     #case_name = 'Delaware-20190718-xml'
-    case_name = 'Guam-20190718-xml'
+    #case_name = 'Guam-20190718-xml'
 
     # Print a case to see
     #print_case(case_name)

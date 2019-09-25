@@ -69,6 +69,21 @@ def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
         """
+        CREATE TABLE Cases (
+            case_id VARCHAR(256),
+            name VARCHAR(256),
+            name_abbreviation VARCHAR(256)
+            decision_date DATE,
+            docket_number VARCHAR(256),
+            first_page INTEGER,
+            last_page INTEGER,
+            frontend_url VARCHAR(256),
+            volume_number INTEGER,
+            frontend_url VARCHAR(256),
+            PRIMARY KEY (case_id)
+        )
+        """
+        """
         CREATE TABLE vendors (
             vendor_id SERIAL PRIMARY KEY,
             vendor_name VARCHAR(255) NOT NULL
