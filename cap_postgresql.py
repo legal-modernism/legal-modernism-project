@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on 15 Sep
@@ -6,8 +6,6 @@ Created on 15 Sep
 @author: Jay Zern Ng
 
 Taken from Source: http://www.postgresqltutorial.com/postgresql-python/
-
-Placeholder for future work.
 
 """
 
@@ -82,7 +80,7 @@ def create_tables():
             frontend_url VARCHAR(256),
             PRIMARY KEY (case_id)
         )
-        """
+        """,
         """
         CREATE TABLE vendors (
             vendor_id SERIAL PRIMARY KEY,
