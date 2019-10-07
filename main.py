@@ -25,13 +25,13 @@ if __name__ == "__main__":
     #case_name = 'New Mexico-20190723-xml'
     #case_name = 'Illinois-20190718-xml'
     #case_name = 'Arkansas-20190718-xml'
-    #case_name = 'Idaho-20190718-xml'
+    case_name = 'Idaho-20190718-xml'
     #case_name = 'Alaska-20190718-xml'
     #case_name = 'American Samoa-20190718-xml'
     #case_name = 'Dakota Territory-20190718-xml'
     #case_name = 'Hawaii-20190718-xml'
     #case_name = 'Delaware-20190718-xml'
-    case_name = 'Guam-20190718-xml'
+    #case_name = 'Guam-20190718-xml'
 
     # Examples only
     case_names = [
@@ -68,4 +68,3 @@ if __name__ == "__main__":
     # Get the corresponding casebody
     # Get case
     casebody = util.get_casebody(case_name)
-    print(type(casebody))

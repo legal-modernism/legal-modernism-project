@@ -59,19 +59,40 @@ def get_casebody(case_name):
 
     # Create lxml root
     root = ET.fromstring(casebody)
-    print(root.tag)
-    print(root.attrib)
-    print([elem.tag for elem in root.iter()])
+    #for child_of_root in root:
+    #    print(child_of_root.tag, child_of_root.attrib)
 
-    # Print Pretty the XML File
-    #print(etree.tostring(root, pretty_print=True).decode())
+    #for elem in root.iter():
+    #    print(elem.tag, elem.attrib)
 
-    #for child in root:
-    #    print(child.tag, child.attrib)
+    ## O(N^2) NAIVE METHOD
+    '''
+    court = root.find("{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}court").text
+    try:
+        citation = root.find("{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}citation").text
+    except:
+        citation = None
+    decisiondate = root.find("{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}decisiondate").text
+    docketnumber = root.find("{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}docketnumber").text
+    casebody_list = [court, citation, decisiondate, docketnumber]
+    print(casebody_list)
+    '''
 
-    #party = root.findall('casebody/parties')
-    #print(party)
+    ## O(N) METHOD: Traverse the xml tree
+    court = citation = decisiondate = docketnumber = None
+    for elem in root.iter():
+        #print(elem, elem.tag)
+        if elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}court":
+            court = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}citation":
+            citation = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}decisiondate":
+            decisiondate = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}docketnumber":
+            docketnumber = elem.text
 
+    casebody_list = [court, citation, decisiondate, docketnumber]
+    print(casebody_list)
 
 def pretty_print_case(case_name):
     '''
