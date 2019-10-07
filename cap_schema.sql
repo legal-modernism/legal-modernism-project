@@ -8,7 +8,6 @@ CREATE TABLE Cases (
     last_page INTEGER,
     frontend_url VARCHAR(256),
     volume_number INTEGER,
-    frontend_url VARCHAR(256),
     reporter_full_name VARCHAR(256),
     PRIMARY KEY (case_id)
 )

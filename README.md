@@ -2,13 +2,14 @@
 
 This repository stores the codebase for the case law access project
 
-### Directory
+## Directory
     .
     ├── data                    # Subfolder to store data from CAP api
     ├── code                    # Github source code here
     │   ├── main.py
     │   ├── cap_postgresql.py
     │   ├── cap_api.py
+    │   ├── utility.py
     └── └── README.md
 
 ## Installation

@@ -10,8 +10,6 @@ Source: https://case.law
 Learn how to access bulk data here: https://case.law/bulk/
 """
 
-import numpy as np
-import pandas as pd
 import requests
 import os
 
@@ -23,9 +21,9 @@ from zipfile import ZipFile
 from environs import Env
 
 def download_cap_data():
-    """
+    '''
     Requests data from caselaw and stores it in ../data/
-    """
+    '''
     # Read environment variables from .env file
     env = Env()
     env.read_env()
@@ -91,30 +89,3 @@ def download_cap_data():
                 print('Extracting all the files now...')
                 zip.extractall(path='../data/')
                 print('Done!')
-
-def print_case(case_name):
-    """
-    Utility function to pretty print a case.
-    """
-
-    filepath = os.path.join('../data/', case_name, 'data', 'data.jsonl.xz')
-
-    with lzma.open(filepath) as in_file:
-        for line in in_file:
-            case = json.loads(str(line, 'utf8'))
-
-    # Print pretty the JSON file
-    print(json.dumps(case, indent=4, sort_keys=True))
-    print('\n')
-    # Access the casebody string
-    casebody = case["casebody"]["data"]
-
-    # Remove the last characters \n
-    casebody = casebody[:-1]
-
-    # Create lxml root
-    root = etree.fromstring(casebody)
-
-    # Print Pretty the XML File
-    print(etree.tostring(root, pretty_print=True).decode())
-    print('\n')
