@@ -1,3 +1,4 @@
+-- from cases
 CREATE TABLE Cases (
     case_id VARCHAR(256),
     name VARCHAR(256),
@@ -11,7 +12,6 @@ CREATE TABLE Cases (
     reporter_full_name VARCHAR(256),
     PRIMARY KEY (case_id)
 )
-
 CREATE TABLE Citations (
     case_id VARCHAR(256),
     cite VARCHAR(256),
@@ -21,7 +21,36 @@ CREATE TABLE Citations (
             ON DELETE CASCADE
             ON UPDATE SET DEFAULT
 )
+CREATE TABLE Courts (
+    court_id VARCHAR(256),
+    case_id VARCHAR(256),
+    jurisdiction_url VARCHAR(256),
+    name VARCHAR(256),
+    name_abbreviation VARCHAR(256),
+    slug VARCHAR(256),
+    PRIMARY KEY (court_id),
+    FOREIGN KEY (case_id)
+        REFERENCES Cases
+            ON DELETE CASCADE
+            ON UPDATE SET DEFAULT
+)
 
+CREATE TABLE Jurisdiction (
+    jurisdiction_id VARCHAR(256),
+    case_id VARCHAR(256),
+    name VARCHAR(256),
+    name_long VARCHAR(256),
+    slug VARCHAR(256),
+    whitelisted BOOLEAN,
+    PRIMARY KEY (jurisdiction_id),
+    FOREIGN KEY (case_id)
+        REFERENCES Cases
+            ON DELETE CASCADE
+            ON UPDATE SET DEFAULT
+);
+
+
+-- INSIDE XML TREE
 CREATE TABLE Casebody (
     case_id VARCHAR(256),
     court VARCHAR(256),
@@ -35,6 +64,7 @@ CREATE TABLE Casebody (
 )
 
 CREATE TABLE Opinions (
+    case_id VARCHAR(256),
     author VARCHAR(256),
     opinion TEXT,
     opinion_type VARCHAR(256),
@@ -57,33 +87,6 @@ CREATE TABLE Parties (
             ON UPDATE SET DEFAULT
 )
 
-CREATE TABLE Courts (
-    court_id VARCHAR(256),
-    case_id VARCHAR(256),
-    jurisdiction_url VARCHAR(256),
-    name VARCHAR(256),
-    name_abbreviation VARCHAR(256),
-    slug VARCHAR(256),
-    PRIMARY KEY (court_id),
-    FOREIGN KEY (case_id)
-        REFERENCES Cases
-            ON DELETE CASCADE
-            ON UPDATE SET DEFAULT
-)
-
-CREATE TABLE Jurisdiction (
-    jurisdiction_id VARCHAR(256),
-    case_id VARCHAR(256),
-    name VARCHAR(256),
-    name_long VARCHAR(256),
-    slug VARCHAR(256),
-    whitelisted BOOLEAN
-    PRIMARY KEY (jurisdiction_id),
-    FOREIGN KEY (case_id)
-        REFERENCES Cases
-            ON DELETE CASCADE
-            ON UPDATE SET DEFAULT
-)
 
 CREATE TABLE Attorneys (
     attorney_id VARCHAR(256),
@@ -105,15 +108,15 @@ CREATE TABLE Attorneys_Of (
 )
 
 CREATE TABLE Judges (
-    judges_id VARCHAR(256),
+    judge_id VARCHAR(256),
     judges VARCHAR(256),
     PRIMARY KEY (judge_id)
 )
 
 CREATE TABLE Judges_Of (
-    judges_id VARCHAR(256),
+    judge_id VARCHAR(256),
     case_id VARCHAR(256),
-    FOREIGN KEY (judge_id)
+    FOREIGN KEY (judge_id),
         REFERENCES Judges
             ON DELETE CASCADE
             ON UPDATE SET DEFAULT,

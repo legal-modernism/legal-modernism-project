@@ -22,26 +22,14 @@ if __name__ == "__main__":
     #print(subfolders)
 
     # Examples only
-    #case_name = 'New Mexico-20190723-xml'
-    #case_name = 'Illinois-20190718-xml'
-    #case_name = 'Arkansas-20190718-xml'
-    case_name = 'Idaho-20190718-xml'
-    #case_name = 'Alaska-20190718-xml'
-    #case_name = 'American Samoa-20190718-xml'
-    #case_name = 'Dakota Territory-20190718-xml'
-    #case_name = 'Hawaii-20190718-xml'
-    #case_name = 'Delaware-20190718-xml'
-    #case_name = 'Guam-20190718-xml'
-
-    # Examples only
     case_names = [
-        #'Idaho-20190718-xml',
+        'Idaho-20190718-xml',
         #'Alaska-20190718-xml',
         #'American Samoa-20190718-xml',
         #'Dakota Territory-20190718-xml',
-        #'Hawaii-20190718-xml',
+        'Hawaii-20190718-xml',
         'Delaware-20190718-xml',
-        'Guam-20190718-xml'
+        #'Guam-20190718-xml'
     ]
 
     # Print a case to see
@@ -51,20 +39,45 @@ if __name__ == "__main__":
     #capdb.test_connect()
 
     # Refresh tables
-    capdb.drop_all_tables()
+    #capdb.drop_all_tables()
 
     # Create table
-    capdb.create_tables()
+    #capdb.create_tables()
 
-    # Get case
-    case_list = []
-    for name in case_names:
-        case = util.get_case(name)
-        case_list.append(case)
+    """DONE"""
+    # INSERT cases table
+    #case_list = []
+    #for name in case_names:
+    #    case = util.get_case(name)
+    #    case_list.append(case)
+    #capdb.insert_cases_list(case_list)
 
-    # Insert JSON into database
-    capdb.insert_cases_list(case_list)
+    """DONE"""
+    # INSERT citations table
+    #citation_list = []
+    #for name in case_names:
+    #    citation = util.get_citations(name)
+    #    citation_list = citation_list + citation
+    #capdb.insert_citations_list(citation_list)
 
+
+    """DONE"""
+    # INSERT courts table
+    #court_list = []
+    #for name in case_names:
+    #    court = util.get_court(name)
+    #    court_list.append(court)
+    #capdb.insert_courts_list(court_list)
+
+    """DONE"""
+    # INSERT Jurisdiction table
+    #jurisdiction_list = []
+    #for name in case_names:
+    #    jurisdiction = util.get_jurisdiction(name)
+    #    jurisdiction_list.append(jurisdiction)
+    #capdb.insert_jurisdiction_list(jurisdiction_list)
+
+    """INCOMPLETE"""
     # Get the corresponding casebody
-    # Get case
-    casebody = util.get_casebody(case_name)
+    #for name in case_names:
+    #    casebody = util.get_casebody(name)

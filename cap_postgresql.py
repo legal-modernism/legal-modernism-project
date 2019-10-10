@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 15 Sep
@@ -70,7 +70,7 @@ def create_tables():
     '''
     commands = (
         """
-        CREATE TABLE Cases (
+        CREATE TABLE IF NOT EXISTS Cases (
             case_id VARCHAR(256),
             name VARCHAR(256),
             name_abbreviation VARCHAR(256),
@@ -83,12 +83,67 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE Casebody (
+        CREATE TABLE IF NOT EXISTS Citations (
+            case_id VARCHAR(256),
+            cite VARCHAR(256),
+            type VARCHAR(256),
+            FOREIGN KEY (case_id)
+                REFERENCES Cases
+                    ON DELETE CASCADE
+                    ON UPDATE SET DEFAULT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS Courts (
+            case_id VARCHAR(256),
+            court_id VARCHAR(256),
+            jurisdiction_url VARCHAR(256),
+            name VARCHAR(256),
+            name_abbreviation VARCHAR(256),
+            slug VARCHAR(256),
+            PRIMARY KEY (case_id, court_id),
+            FOREIGN KEY (case_id)
+                REFERENCES Cases
+                    ON DELETE CASCADE
+                    ON UPDATE SET DEFAULT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS Jurisdiction (
+            case_id VARCHAR(256),
+            jurisdiction_id VARCHAR(256),
+            name VARCHAR(256),
+            name_long VARCHAR(256),
+            slug VARCHAR(256),
+            whitelisted BOOLEAN,
+            PRIMARY KEY (jurisdiction_id),
+            FOREIGN KEY (case_id)
+                REFERENCES Cases
+                    ON DELETE CASCADE
+                    ON UPDATE SET DEFAULT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS Casebody (
             case_id VARCHAR(256),
             court VARCHAR(256),
             citation VARCHAR(256),
             decisiondate DATE,
             docket_number VARCHAR(256),
+            judges VARCHAR(256), -- Judge TABLE
+            parties VARCHAR(256), -- PARTIES TABLE
+            headnotes TEXT, -- HEADNOTES TABLE
+            summaries TEXT, -- SUMMARIEIS
+            FOREIGN KEY (case_id)
+                REFERENCES Cases
+                    ON DELETE CASCADE
+                    ON UPDATE SET DEFAULT
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS Attorneys_Of (
+            attorneys VARCHAR(256),
+            case_id VARCHAR(256),
             FOREIGN KEY (case_id)
                 REFERENCES Cases
                     ON DELETE CASCADE
@@ -153,6 +208,102 @@ def insert_cases_list(clist):
         cur = conn.cursor()
         # execute the INSERT statement
         cur.executemany(sql, clist)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+def insert_citations_list(clist):
+    '''
+    Inserts a list of list into the citations table
+    '''
+    sql = """INSERT INTO citations
+                (case_id,
+                cite,
+                type)
+             VALUES
+                (%s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, clist)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+def insert_courts_list(clist):
+    '''
+    Inserts a list of list into the courts table
+    '''
+    sql = """INSERT INTO courts
+                (case_id,
+                court_id,
+                jurisdiction_url,
+                name,
+                name_abbreviation,
+                slug)
+             VALUES
+                (%s, %s, %s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, clist)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+def insert_jurisdiction_list(jlist):
+    '''
+    Inserts a list of list into the insert_jurisdiction_list table
+    '''
+    sql = """INSERT INTO jurisdiction
+                (case_id,
+                jurisdiction_id,
+                name,
+                name_long,
+                slug,
+                whitelisted)
+             VALUES
+                (%s, %s, %s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, jlist)
         # commit the changes to the database
         conn.commit()
         # close communication with the database
