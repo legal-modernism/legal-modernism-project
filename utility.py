@@ -174,6 +174,7 @@ def get_casebody(case_name):
 
     ## O(N) METHOD: Traverse the xml tree
     court = citation = decisiondate = docketnumber = judges = parties = None
+    headnotes = summaries = opinions = None
     for elem in root.iter():
         #print(elem, elem.tag)
         if elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}court":
@@ -188,6 +189,14 @@ def get_casebody(case_name):
             judges = elem.text
         elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}parties":
             parties = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}headnotes":
+            """TODO: FIX THIS, MULTIPLE HEAD NOTES"""
+            headnotes = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}summaries":
+            """TODO: FIX THIS, MULTIPLE HEAD NOTES"""
+            summaries = elem.text
+        elif elem.tag == "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}opinions":
+            opinions  = elem.text
 
     casebody_list = [
         case_id,
@@ -196,10 +205,14 @@ def get_casebody(case_name):
         decisiondate,
         docketnumber,
         judges,
-        parties
+        parties,
+        headnotes,
+        summaries,
+        opinions
     ]
-    print(casebody_list)
 
+    return casebody_list
+    
 def pretty_print_case(case_name):
     '''
     Utility function to pretty print a case.

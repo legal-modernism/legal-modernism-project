@@ -30,7 +30,7 @@ CREATE TABLE Courts (
     name VARCHAR(256),
     name_abbreviation VARCHAR(256),
     slug VARCHAR(256),
-    PRIMARY KEY (case_id, court_id),
+    PRIMARY KEY (court_id),
     FOREIGN KEY (case_id)
         REFERENCES Cases
             ON DELETE CASCADE
@@ -55,7 +55,7 @@ CREATE TABLE Casebody (
     case_id VARCHAR(256),
     court VARCHAR(256),
     citation VARCHAR(256),
-    decisiondate DATE,
+    decisiondate VARCHAR(256),
     docket_number VARCHAR(256),
     judges VARCHAR(256), -- Judge TABLE
     parties VARCHAR(256), -- PARTIES TABLE

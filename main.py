@@ -77,7 +77,10 @@ if __name__ == "__main__":
     #    jurisdiction_list.append(jurisdiction)
     #capdb.insert_jurisdiction_list(jurisdiction_list)
 
-    """INCOMPLETE"""
+    """DONE"""
     # Get the corresponding casebody
+    #casebody_list = []
     #for name in case_names:
     #    casebody = util.get_casebody(name)
+    #    casebody_list.append(casebody)
+    #capdb.insert_casebody_list(casebody_list)

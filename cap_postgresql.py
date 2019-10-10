@@ -70,7 +70,7 @@ def create_tables():
     '''
     commands = (
         """
-        CREATE TABLE IF NOT EXISTS Cases (
+        CREATE TABLE Cases (
             case_id VARCHAR(256),
             name VARCHAR(256),
             name_abbreviation VARCHAR(256),
@@ -83,7 +83,7 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS Citations (
+        CREATE TABLE Citations (
             case_id VARCHAR(256),
             cite VARCHAR(256),
             type VARCHAR(256),
@@ -94,7 +94,7 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS Courts (
+        CREATE TABLE Courts (
             case_id VARCHAR(256),
             court_id VARCHAR(256),
             jurisdiction_url VARCHAR(256),
@@ -109,7 +109,7 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS Jurisdiction (
+        CREATE TABLE Jurisdiction (
             case_id VARCHAR(256),
             jurisdiction_id VARCHAR(256),
             name VARCHAR(256),
@@ -124,16 +124,17 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS Casebody (
+        CREATE TABLE Casebody (
             case_id VARCHAR(256),
             court VARCHAR(256),
             citation VARCHAR(256),
-            decisiondate DATE,
+            decisiondate VARCHAR(256),
             docket_number VARCHAR(256),
             judges VARCHAR(256), -- Judge TABLE
             parties VARCHAR(256), -- PARTIES TABLE
             headnotes TEXT, -- HEADNOTES TABLE
             summaries TEXT, -- SUMMARIEIS
+            opinions TEXT,
             FOREIGN KEY (case_id)
                 REFERENCES Cases
                     ON DELETE CASCADE
@@ -304,6 +305,43 @@ def insert_jurisdiction_list(jlist):
         cur = conn.cursor()
         # execute the INSERT statement
         cur.executemany(sql, jlist)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+def insert_casebody_list(clist):
+    '''
+    Inserts a list of list into the insert_jurisdiction_list table
+    '''
+    sql = """INSERT INTO Casebody
+                (case_id,
+                court,
+                citation,
+                decisiondate,
+                docket_number,
+                judges,
+                parties,
+                headnotes,
+                summaries,
+                opinions)
+             VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, clist)
         # commit the changes to the database
         conn.commit()
         # close communication with the database
