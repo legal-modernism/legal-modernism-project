@@ -21,9 +21,7 @@ from zipfile import ZipFile
 from environs import Env
 
 def download_cap_data():
-    '''
-    Requests data from caselaw and stores it in ../data/
-    '''
+    """Requests data from caselaw and stores it in ../data/"""
     # Read environment variables from .env file
     env = Env()
     env.read_env()

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on 15 Sep
+"""Created on 15 Sep
 
 @author: Jay Zern Ng
-
 """
 
 import psycopg2
@@ -12,9 +10,7 @@ import psycopg2
 from configparser import ConfigParser
 
 def config(filename='database.ini', section='postgresql'):
-    '''
-    Utility function for configuring psycopg2
-    '''
+    """Utility function for configuring psycopg2"""
     # create a parser
     parser = ConfigParser()
     # read config file
@@ -32,9 +28,7 @@ def config(filename='database.ini', section='postgresql'):
     return db
 
 def test_connect():
-    '''
-    Test if postgresql server works
-    '''
+    """Test if postgresql server works"""
     conn = None
     try:
         # read connection parameters
@@ -65,93 +59,6 @@ def test_connect():
             print('Database connection closed.')
 
 def create_tables():
-    '''
-    Initialize table from schema
-    '''
-    commands = (
-        """
-        CREATE TABLE Cases (
-            case_id VARCHAR(256),
-            name VARCHAR(256),
-            name_abbreviation VARCHAR(256),
-            decision_date DATE,
-            docket_number VARCHAR(256),
-            first_page INTEGER,
-            last_page INTEGER,
-            frontend_url VARCHAR(256),
-            PRIMARY KEY (case_id)
-        )
-        """,
-        """
-        CREATE TABLE Citations (
-            case_id VARCHAR(256),
-            cite VARCHAR(256),
-            type VARCHAR(256),
-            FOREIGN KEY (case_id)
-                REFERENCES Cases
-                    ON DELETE CASCADE
-                    ON UPDATE SET DEFAULT
-        )
-        """,
-        """
-        CREATE TABLE Courts (
-            case_id VARCHAR(256),
-            court_id VARCHAR(256),
-            jurisdiction_url VARCHAR(256),
-            name VARCHAR(256),
-            name_abbreviation VARCHAR(256),
-            slug VARCHAR(256),
-            PRIMARY KEY (case_id, court_id),
-            FOREIGN KEY (case_id)
-                REFERENCES Cases
-                    ON DELETE CASCADE
-                    ON UPDATE SET DEFAULT
-        )
-        """,
-        """
-        CREATE TABLE Jurisdiction (
-            case_id VARCHAR(256),
-            jurisdiction_id VARCHAR(256),
-            name VARCHAR(256),
-            name_long VARCHAR(256),
-            slug VARCHAR(256),
-            whitelisted BOOLEAN,
-            PRIMARY KEY (jurisdiction_id),
-            FOREIGN KEY (case_id)
-                REFERENCES Cases
-                    ON DELETE CASCADE
-                    ON UPDATE SET DEFAULT
-        )
-        """,
-        """
-        CREATE TABLE Casebody (
-            case_id VARCHAR(256),
-            court VARCHAR(256),
-            citation VARCHAR(256),
-            decisiondate VARCHAR(256),
-            docket_number VARCHAR(256),
-            judges VARCHAR(256), -- Judge TABLE
-            parties VARCHAR(256), -- PARTIES TABLE
-            headnotes TEXT, -- HEADNOTES TABLE
-            summaries TEXT, -- SUMMARIEIS
-            opinions TEXT,
-            FOREIGN KEY (case_id)
-                REFERENCES Cases
-                    ON DELETE CASCADE
-                    ON UPDATE SET DEFAULT
-        )
-        """,
-        """
-        CREATE TABLE IF NOT EXISTS Attorneys_Of (
-            attorneys VARCHAR(256),
-            case_id VARCHAR(256),
-            FOREIGN KEY (case_id)
-                REFERENCES Cases
-                    ON DELETE CASCADE
-                    ON UPDATE SET DEFAULT
-        )
-        """
-    )
     conn = None
     try:
         # read the connection parameters
@@ -159,9 +66,11 @@ def create_tables():
         # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        # create table one by one
-        for command in commands:
-            cur.execute(command)
+
+        # Create schema from local SQL file
+        schema_file = open('lmp_schema.sql', 'r')
+        cur.execute(schema_file.read())
+
         # close communication with the PostgreSQL database server
         cur.close()
         # commit the changes
@@ -173,14 +82,20 @@ def create_tables():
             conn.close()
 
 def drop_all_tables():
-    '''
-    Drop tables to refresh
-    '''
+    """Drop tables to refresh"""
     params = config()
     conn = psycopg2.connect(**params)
     cur = conn.cursor()
     cur.execute('DROP TABLE Cases CASCADE;')
-    cur.execute('DROP TABLE Casebody CASCADE;')
+    cur.execute('DROP TABLE Citations CASCADE;')
+    cur.execute('DROP TABLE Jurisdiction CASCADE;')
+    cur.execute('DROP TABLE Courts CASCADE;')
+    cur.execute('DROP TABLE Parties CASCADE;')
+    cur.execute('DROP TABLE Judges CASCADE;')
+    cur.execute('DROP TABLE Attorneys CASCADE;')
+    cur.execute('DROP TABLE Headnotes CASCADE;')
+    cur.execute('DROP TABLE Summaries CASCADE;')
+    cur.execute('DROP TABLE Opinions CASCADE;')
     conn.commit()
     conn.close()
 
