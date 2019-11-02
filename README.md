@@ -1,4 +1,4 @@
-# case-law-access-project
+# legal-modernism-project
 
 This repository stores the codebase for the case law access project
 
