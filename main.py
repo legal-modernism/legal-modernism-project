@@ -6,9 +6,9 @@ Created on 15 Sep
 @author: Jay Zern Ng
 
 Main script that runs cap_api and cap_postgesql
-
 """
 
+import os
 import cap_api as capapi
 import cap_postgresql as capdb
 import utility as util
@@ -18,13 +18,13 @@ if __name__ == "__main__":
     if False:
         capapi.download_cap_data()
 
-    # Print subfolers
+    # Print jurisdictions
     if False:
         subfolders = [f.path for f in os.scandir('../data/') if f.is_dir() ]
-        print(subfolders)
+        print(len(subfolders))
 
     # Examples only
-    case_names = [
+    subfolders = [
         'Dakota Territory-20190718-xml'
     ]
 
@@ -37,15 +37,14 @@ if __name__ == "__main__":
         capdb.test_connect()
 
     # Refresh tables
-    if False:
+    if True:
         capdb.drop_all_tables()
 
     # Create table
-    if False:
+    if True:
         capdb.create_tables()
 
-    for name in case_names:
-        print(name)
+    for name in subfolders:
         util.get_all_entities(name)
 
     # """DONE"""

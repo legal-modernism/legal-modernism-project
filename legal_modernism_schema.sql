@@ -9,8 +9,6 @@ CREATE TABLE Cases (
     frontend_url VARCHAR(256),
     volume_number INTEGER,
     reporter_full_name VARCHAR(256),
-    court VARCHAR(256),
-    citation VARCHAR(256),
     PRIMARY KEY (case_id)
 );
 

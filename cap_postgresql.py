@@ -68,7 +68,7 @@ def create_tables():
         cur = conn.cursor()
 
         # Create schema from local SQL file
-        schema_file = open('lmp_schema.sql', 'r')
+        schema_file = open('legal_modernism_schema.sql', 'r')
         cur.execute(schema_file.read())
 
         # close communication with the PostgreSQL database server
