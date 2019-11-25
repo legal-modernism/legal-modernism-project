@@ -29,7 +29,7 @@ def download_cap_data():
     # WARNING:
     # 1. Do not share API_KEY with others!
     # 2. Make sure .env is in .gitignore
-    API_KEY = env("API_KEY");
+    API_KEY = env("API_KEY")
 
     # Note: set body_format to xml
     # Important: Set token for API authorization, do not share this!

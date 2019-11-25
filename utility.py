@@ -8,13 +8,9 @@ Created on 15 Sep
 Utility functions to get or print JSON and XML files
 """
 
-import requests
 import os
 import lzma
 import json
-
-from zipfile import ZipFile
-from environs import Env
 
 try:
     import xml.etree.cElementTree as ET
@@ -28,100 +24,123 @@ def get_all_entities(case_name):
 
     with lzma.open(filepath) as in_file:
         for line in in_file:
-            case = json.loads(str(line, 'utf8'))
+            data = json.loads(str(line, 'utf8'))
 
     # Get cases
-    case_list = [
-        case['id'],
-        case['name'],
-        case['name_abbreviation'],
-        case['decision_date'],
-        case['docket_number'],
-        case['first_page'],
-        case['last_page'],
-        case['frontend_url'],
-        case['volume']['volume_number'],
-        case['reporter']['full_name']
+    case = [
+        data['id'],
+        data['name'],
+        data['name_abbreviation'],
+        data['decision_date'],
+        data['docket_number'],
+        data['first_page'],
+        data['last_page'],
+        data['frontend_url'],
+        data['volume']['volume_number'],
+        data['reporter']['full_name']
     ]
 
     # Get citations (there may be multiple)
-    citation_list = []
-    for citation in case['citations']:
-        citation_list.append([case['id'], citation['cite'], citation['type']])
+    citations = []
+    for citation in data['citations']:
+        citations.append([data['id'], citation['cite'], citation['type']])
 
     # Get jurisdictions
-    jurisdiction_list = [
-        case['id'],
-        case['jurisdiction']['id'],
-        case['jurisdiction']['name'],
-        case['jurisdiction']['name_long'],
-        case['jurisdiction']['slug'],
-        case['jurisdiction']['whitelisted']
+    jurisdiction = [
+        data['id'],
+        data['jurisdiction']['id'],
+        data['jurisdiction']['name'],
+        data['jurisdiction']['name_long'],
+        data['jurisdiction']['slug'],
+        data['jurisdiction']['whitelisted']
     ]
 
     # Get courts
-    court_list = [
-        case['id'],
-        case['court']['id'],
-        case['court']['jurisdiction_url'],
-        case['court']['name'],
-        case['court']['name_abbreviation'],
-        case['court']['slug']
+    court = [
+        data['id'],
+        data['court']['id'],
+        data['court']['jurisdiction_url'],
+        data['court']['name'],
+        data['court']['name_abbreviation'],
+        data['court']['slug']
     ]
 
     # Handle XML files, Create element tree, Traverse the xml tree
-    casebody = case['casebody']['data']
+    casebody = data['casebody']['data']
     root = ET.fromstring(casebody)
-    court = citation = decisiondate = docketnumber = judges = parties = None
-    headnotes = []; summaries = []; opinions = []; attorneys = []
+    parties = []
+    judges = []
+    headnotes = []
+    summary = []
+    opinion = []
+    attorneys = []
 
     """TODO: Fix this:
-    1. multiple attorneys
-    2. multiple Headnotes
-    3. multiple Summaries
-    4. multiple Opinions
     5. for cases, need to get call casebody attributes and store it in cases
     """
 
     tag_prefix = "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}"
     for elem in root.iter():
-        #print(elem, elem.tag)
-        if elem.tag == tag_prefix + "court":
-            court = ET.tostring(elem, method='text')
-        elif elem.tag == tag_prefix + "citation":
-            citation = ET.tostring(elem, method='text')
-        elif elem.tag == tag_prefix + "decisiondate":
-            decisiondate = ET.tostring(elem, method='text')
-        elif elem.tag == tag_prefix + "docketnumber":
-            docketnumber = ET.tostring(elem, method='text')
-        elif elem.tag == tag_prefix + "judges":
-            judges = ET.tostring(elem, method='text')
+        if elem.tag == tag_prefix + "judges":
+            case_id = data['id']
+            judges_id = elem.attrib['id']
+            judges_text = ET.tostring(elem, method='text').decode()
+            judges.append([case_id, judges_id, judges_text])
         elif elem.tag == tag_prefix + "parties":
-            parties = ET.tostring(elem, method='text')
+            case_id = data['id']
+            parties_id = elem.attrib['id']
+            parties_text = ET.tostring(elem, method='text').decode()
+            parties.append([case_id, parties_id, parties_text])
         elif elem.tag == tag_prefix + "headnotes":
-            headnotes.append([case['id'], ET.tostring(elem, method='text')])
-        elif elem.tag == tag_prefix + "summaries":
-            summaries.append([case['id'], ET.tostring(elem, method='text')])
-        elif elem.tag == tag_prefix + "opinions":
-            opinions.append([case['id'], ET.tostring(elem, method='text')])
+            case_id = data['id']
+            headnotes_id = elem.attrib['id']
+            headnotes_text = ET.tostring(elem, method='text').decode()
+            headnotes.append([case_id, headnotes_id, headnotes_text])
+        elif elem.tag == tag_prefix + "summary":
+            case_id = data['id']
+            summary_id = elem.attrib['id']
+            summary_text = ET.tostring(elem, method='text').decode()
+            summary.append([case_id, summary_id, summary_text])
+        elif elem.tag == tag_prefix + "opinion":
+            case_id = data['id']
+            opinion_type = elem.attrib['type']
+            for child in elem:
+                if child.tag == tag_prefix + "p":
+                    text_type = "paragraph"
+                    text_id = child.attrib['id']
+                    text = ET.tostring(child, method='text').decode()
+                    opinion.append(
+                        [case_id, opinion_type, text_type, text_id, text])
+                if child.tag == tag_prefix + "author":
+                    text_type = "author"
+                    text_id = child.attrib['id']
+                    text = ET.tostring(child, method='text').decode()
+                    opinion.append(
+                        [case_id, opinion_type, text_type, text_id, text])
+                if child.tag == tag_prefix + "judges":
+                    text_type = "judges"
+                    text_id = child.attrib['id']
+                    text = ET.tostring(child, method='text').decode()
+                    opinion.append(
+                        [case_id, opinion_type, text_type, text_id, text])
+                if child.tag == tag_prefix + "footnote":
+                    for grandchild in child:
+                        text_type = "footnote"
+                        text_id = grandchild.attrib['id']
+                        text = ET.tostring(grandchild, method='text').decode()
+                        opinion.append(
+                            [case_id, opinion_type, text_type, text_id, text])
         elif elem.tag == tag_prefix + "attorneys":
-            attorneys.append([case['id'], ET.tostring(elem, method='text')])
+            case_id = data['id']
+            attorneys_id = elem.attrib['id']
+            attorneys_text = ET.tostring(elem, method='text').decode()
+            attorneys.append([case_id, attorneys_id, attorneys_text])
+        else:
+            # Else do something here
+            pass
 
-    # Get parties
-    #parties_list = [
-    #    case_id,
-    #    parties
-    #]
-
-    # Get judges
-    #judges_list = [
-    #    case_id,
-    #    judges
-    #]
-
-    # DEBUG:
-    #for pair in attorneys:
-    #    print(pair)
+    return case, citations, jurisdiction, court, parties, judges, \
+        attorneys, headnotes, summary, opinion
 
 
 def get_case(case_name):

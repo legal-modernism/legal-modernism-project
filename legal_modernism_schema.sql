@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS Cases CASCADE;
+DROP TABLE IF EXISTS Citations CASCADE;
+DROP TABLE IF EXISTS Jurisdiction CASCADE;
+DROP TABLE IF EXISTS Courts CASCADE;
+DROP TABLE IF EXISTS Parties CASCADE;
+DROP TABLE IF EXISTS Judges CASCADE;
+DROP TABLE IF EXISTS Attorneys CASCADE;
+DROP TABLE IF EXISTS Headnotes CASCADE;
+DROP TABLE IF EXISTS Summary CASCADE;
+DROP TABLE IF EXISTS Opinion CASCADE;
+
 CREATE TABLE Cases (
     case_id VARCHAR(256),
     name VARCHAR(256),
@@ -46,6 +57,7 @@ CREATE TABLE Courts (
 
 CREATE TABLE Parties (
     case_id VARCHAR(256),
+    parties_id VARCHAR(256),
     parties VARCHAR(256),
     FOREIGN KEY (case_id)
       REFERENCES Cases
@@ -53,6 +65,7 @@ CREATE TABLE Parties (
 
 CREATE TABLE Judges (
     case_id VARCHAR(256),
+    judges_id VARCHAR(256),
     judges VARCHAR(256),
     FOREIGN KEY (case_id)
       REFERENCES Cases
@@ -60,6 +73,7 @@ CREATE TABLE Judges (
 
 CREATE TABLE Attorneys (
     case_id VARCHAR(256),
+    attorneys_id VARCHAR(256),
     attorneys VARCHAR(256),
     FOREIGN KEY (case_id)
       REFERENCES Cases
@@ -67,24 +81,26 @@ CREATE TABLE Attorneys (
 
 CREATE TABLE Headnotes (
     case_id VARCHAR(256),
+    headnotes_id VARCHAR(256),
     headnotes TEXT,
     FOREIGN KEY (case_id)
       REFERENCES Cases
 );
 
-CREATE TABLE Summaries (
+CREATE TABLE Summary (
     case_id VARCHAR(256),
-    summaries TEXT,
+    summary_id VARCHAR(256),
+    summary TEXT,
     FOREIGN KEY (case_id)
       REFERENCES Cases
 );
 
-CREATE TABLE Opinions (
+CREATE TABLE Opinion (
     case_id VARCHAR(256),
-    author VARCHAR(256),
-    opinion TEXT,
     opinion_type VARCHAR(256),
-    footnote TEXT,
+    text_type VARCHAR(256),
+    text_id VARCHAR(256),
+    text TEXT,
     FOREIGN KEY (case_id)
       REFERENCES Cases
 );
