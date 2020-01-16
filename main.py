@@ -14,10 +14,11 @@ import psycopg2
 
 import cap_database as cap_db
 import moml_database as moml_db
-
 import cap_api as cap_api
-
 import utility as util
+
+from sqlalchemy import *
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
 if __name__ == "__main__":
     if False:
@@ -80,5 +81,62 @@ if __name__ == "__main__":
     # Tabulate MOML data
     if True:
         moml_db.create_tables()
+        book = util.get_book_metadata("20001735402_DocMetadata.xml")
+        legal_treatises_metadata = util.get_legal_treatises_metadata()
+        # print(output['bookInfo'])
+
+        # Test insert list of dictionaries
+        """
+        NOTE: Create connection once only
+        THEN close connection once only after insert many
+        """
+
+        # TRY: sqlalchemy
+        # engine = create_engine("postgresql://postgres:amaurylovesalex@127.0.0.1/Legal_Modernism_Project")
+        # connection = engine.connect()
+        # Create table
+        # metadata = MetaData()
+        # book_info = Table('Book_Info', metadata,
+        #     Column('PSMID', String(255), primary_key=True),
+        #     Column('contentType', String(255)),
+        #     Column('ID', String(255)),
+        #     Column('FAID', String(255)),
+        #     Column('COLID', String(255)),
+        #     Column('ocr', String(255)),
+        #     Column('assetID', String(255)),
+        #     Column('assetIDeTOC', String(255)),
+        #     Column('dviCollectionID', String(255)),
+        #     Column('bibliographicID', String(255)),
+        #     Column('bibliographicID_type', String(255)),
+        #     Column('unit', String(255)),
+        #     Column('ficheRange', String(255)),
+        #     Column('mcode', String(255)),
+        #     Column('pubDate_year', String(255)),
+        #     Column('pubDate_composed', String(255)),
+        #     Column('pubDate_pubDateStart', String(255)),
+        #     Column('releaseDate', String(255)),
+        #     Column('sourceLibrary_libraryName', String(255)),
+        #     Column('sourceLibrary_libraryLocation', String(255)),
+        #     Column('language', String(255)),
+        #     Column('language_ocr', String(255)),
+        #     Column('language_primary', String(255)),
+        #     Column('documentType', String(255)),
+        #     Column('notes', String(255)),
+        #     Column('categoryCode', String(255)),
+        #     Column('categoryCode_source', String(255)),
+        #     Column('ProductLink', String)
+        # )
+        #
+        #
+        # connection.close()
         
-        util.get_book_metadata("20001735402_DocMetadata.xml")
+        moml_db.insert_book_info(book['bookInfo'])
+        moml_db.insert_book_citation(book['citation'])
+        moml_db.insert_book_subject(book['subject_list'])
+        moml_db.insert_book_volume_set(book['volumeSet_list'])
+        moml_db.insert_book_loc_subject_head(book['locSubjectHead_list'])
+        moml_db.insert_page(book['page_list'])
+        moml_db.insert_page_content(book['pageContent_list'])
+        moml_db.insert_page_ocr_text(book['ocrText_list'])
+
+        moml_db.insert_legal_treatises_metadata(legal_treatises_metadata)

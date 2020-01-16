@@ -10,13 +10,13 @@ DROP TABLE IF EXISTS Page_ocrText CASCADE;
 
 CREATE TABLE Legal_Treatises_Metadata (
     PSMID VARCHAR(255),
-    author_by_line VARCHAR(255),
+    author_by_line TEXT, -- VARCHAR(255)
     title TEXT,
-    edition VARCHAR(255),
-    current_volume INTEGER,
+    edition TEXT, -- VARCHAR(255)
+    current_volume VARCHAR(255), -- INTEGER
     imprint VARCHAR(255),
     book_collation VARCHAR(255),
-    pages INTEGER,
+    pages VARCHAR(255), -- INTEGER
     PRIMARY KEY (PSMID)
 );
 
@@ -32,13 +32,13 @@ CREATE TABLE Book_Info (
     dviCollectionID VARCHAR(255),
     bibliographicID VARCHAR(255),
     bibliographicID_type VARCHAR(255),
-    unit INTEGER,
+    unit VARCHAR(255), -- INTEGER
     ficheRange VARCHAR(255),
     mcode VARCHAR(255),
-    pubDate_year DATE,
-    pubDate_composed DATE,
-    pubDate_pubDateStart INTEGER,
-    releaseDate INTEGER,
+    pubDate_year VARCHAR(255), -- DATE
+    pubDate_composed VARCHAR(255), -- DATE
+    pubDate_pubDateStart VARCHAR(255), -- INTEGER
+    releaseDate VARCHAR(255), -- INTEGER
     sourceLibrary_libraryName VARCHAR(255),
     sourceLibrary_libraryLocation VARCHAR(255),
     language VARCHAR(255),
@@ -59,22 +59,22 @@ CREATE TABLE Book_Citation (
     author_first VARCHAR(255),
     author_middle VARCHAR(255),
     author_last VARCHAR(255),
-    author_birthDate DATE,
-    author_deathDate DATE,
+    author_birthDate VARCHAR(255), -- DATE
+    author_deathDate VARCHAR(255), -- DATE
     fullTitle TEXT,
     displayTitle TEXT,
     variantTitle TEXT,
-    edition INTEGER,
+    edition VARCHAR(255), -- INTEGER
     editionStatement VARCHAR(255),
-    currentVolume INTEGER,
-    volume INTEGER,
-    totalVolume INTEGER,
+    currentVolume VARCHAR(255), -- INTEGER
+    volume VARCHAR(255), -- INTEGER
+    totalVolume VARCHAR(255), -- INTEGER
     imprintFull VARCHAR(255),
     imprintPublisher VARCHAR(255),
     book_collation VARCHAR(255),
     publicationPlaceCity VARCHAR(255),
     publicationPlaceComposed VARCHAR(255),
-    totalPages INTEGER,
+    totalPages VARCHAR(255), -- INTEGER
     FOREIGN KEY (PSMID)
         REFERENCES Book_Info
 );
@@ -112,11 +112,11 @@ CREATE TABLE Page (
     firstPage VARCHAR(255),
     assetID VARCHAR(255),
     ocrLanguage VARCHAR(255),
-    sourcePage INTEGER,
+    sourcePage VARCHAR(255), -- INTEGER
     ocr VARCHAR(255),
     imageLink_pageIndicator VARCHAR(255),
-    imageLink_width INTEGER,
-    imageLink_height INTEGER,
+    imageLink_width VARCHAR(255), -- INTEGER
+    imageLink_height VARCHAR(255), -- INTEGER
     imageLink_type VARCHAR(255),
     imageLink_colorimage VARCHAR(255),
     imageLink VARCHAR(255),

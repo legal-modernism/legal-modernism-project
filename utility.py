@@ -11,6 +11,8 @@ Utility functions to get or print JSON and XML files
 import os
 import lzma
 import json
+import csv
+import re
 
 try:
     import xml.etree.cElementTree as ET
@@ -163,97 +165,170 @@ def get_book_metadata(book_name):
 
     # Get bookInfo
     for elem in root.iter('bookInfo'):
-        bookInfo = {
-            "PSMID": PSMID,
-            "contentType": contentType,
-            "ID": ID,
-            "FAID": FAID,
-            "COLID": COLID,
-            "ocr": elem.find('ocr').text,
-            "assetID": elem.find('assetID').text,
-            "assetIDeTOC": elem.find('assetIDeTOC').text,
-            "dviCollectionID": elem.find('dviCollectionID').text,
-            "bibliographicID": elem.find('bibliographicID').text,
-            "bibliographicID_type": elem.find('bibliographicID').attrib['type'],
-            "unit": elem.find('unit').text,
-            "ficheRange": elem.find('unit').text,
-            "mcode": elem.find('mcode').text,
-            "pubDate_year": elem.find('pubDate').find('year').text,
-            "pubDate_composed": elem.find('pubDate').find('composed').text,
-            "pubDate_pubDateStart": elem.find('pubDate').find('pubDateStart').text,
-            "releaseDate": elem.find('releaseDate').text,
-            "sourceLibrary_libraryName": elem.find('sourceLibrary').find('libraryName').text,
-            "sourceLibrary_libraryLocation": elem.find('sourceLibrary').find('libraryLocation').text,
-            "language": elem.find('language').text,
-            "language_ocr": elem.find('language').attrib['ocr'],
-            "language_primary": elem.find('language').attrib['primary'],
-            "documentType": elem.find('documentType').text,
-            "notes": elem.find('notes').text,
-            "categoryCode": elem.find('categoryCode').text,
-            "categoryCode_source": elem.find('categoryCode').attrib['source'],
-            "ProductLink": elem.find('ProductLink').text,
-        }
+        # bookInfo = {
+        #     "PSMID": PSMID,
+        #     "contentType": contentType,
+        #     "ID": ID,
+        #     "FAID": FAID,
+        #     "COLID": COLID,
+        #     "ocr": elem.find('ocr').text,
+        #     "assetID": elem.find('assetID').text,
+        #     "assetIDeTOC": elem.find('assetIDeTOC').text,
+        #     "dviCollectionID": elem.find('dviCollectionID').text,
+        #     "bibliographicID": elem.find('bibliographicID').text,
+        #     "bibliographicID_type": elem.find('bibliographicID').attrib['type'],
+        #     "unit": elem.find('unit').text,
+        #     "ficheRange": elem.find('ficheRange').text,
+        #     "mcode": elem.find('mcode').text,
+        #     "pubDate_year": elem.find('pubDate').find('year').text,
+        #     "pubDate_composed": elem.find('pubDate').find('composed').text,
+        #     "pubDate_pubDateStart": elem.find('pubDate').find('pubDateStart').text,
+        #     "releaseDate": elem.find('releaseDate').text,
+        #     "sourceLibrary_libraryName": elem.find('sourceLibrary').find('libraryName').text,
+        #     "sourceLibrary_libraryLocation": elem.find('sourceLibrary').find('libraryLocation').text,
+        #     "language": elem.find('language').text,
+        #     "language_ocr": elem.find('language').attrib['ocr'],
+        #     "language_primary": elem.find('language').attrib['primary'],
+        #     "documentType": elem.find('documentType').text,
+        #     "notes": elem.find('notes').text,
+        #     "categoryCode": elem.find('categoryCode').text,
+        #     "categoryCode_source": elem.find('categoryCode').attrib['source'],
+        #     "ProductLink": elem.find('ProductLink').text,
+        # }
+
+        # There should be 28 items here
+        bookInfo = [
+            PSMID,
+            contentType,
+            ID,
+            FAID,
+            COLID,
+            elem.find('ocr').text,
+            elem.find('assetID').text,
+            elem.find('assetIDeTOC').text,
+            elem.find('dviCollectionID').text,
+            elem.find('bibliographicID').text,
+            elem.find('bibliographicID').attrib['type'],
+            elem.find('unit').text,
+            elem.find('ficheRange').text,
+            elem.find('mcode').text,
+            elem.find('pubDate').find('year').text,
+            elem.find('pubDate').find('composed').text,
+            elem.find('pubDate').find('pubDateStart').text,
+            elem.find('releaseDate').text,
+            elem.find('sourceLibrary').find('libraryName').text,
+            elem.find('sourceLibrary').find('libraryLocation').text,
+            elem.find('language').text,
+            elem.find('language').attrib['ocr'],
+            elem.find('language').attrib['primary'],
+            elem.find('documentType').text,
+            elem.find('notes').text,
+            elem.find('categoryCode').text,
+            elem.find('categoryCode').attrib['source'],
+            elem.find('ProductLink').text,
+        ]
         # print(bookInfo)
 
     # Get citation
     for elem in root.iter('citation'):
-        citation = {
-            "PSMID": PSMID,
-            "author_role": elem.find('authorGroup').attrib['role'],
-            "author_composed": elem.find('authorGroup').find('author').find('composed').text,
-            "author_first": elem.find('authorGroup').find('author').find('first').text,
-            "author_middle": elem.find('authorGroup').find('author').find('middle').text,
-            "author_last": elem.find('authorGroup').find('author').find('last').text,
-            "author_birthDate": elem.find('authorGroup').find('author').find('birthDate').text,
-            "author_deathDate": elem.find('authorGroup').find('author').find('deathDate').text,
-            "fullTitle": elem.find('titleGroup').find('fullTitle').text,
-            "displayTitle": elem.find('titleGroup').find('displayTitle').text,
-            "variantTitle": elem.find('titleGroup').find('variantTitle').text,
-            "edition": elem.find('edition').text,
-            "editionStatement": elem.find('editionStatement').text,
-            "currentVolume": elem.find('volumeGroup').find('currentVolume').text,
-            "volume": elem.find('volumeGroup').find('Volume').text,
-            "totalVolumes": elem.find('volumeGroup').find('totalVolumes').text,
-            "imprintFull": elem.find('imprint').find('imprintFull').text,
-            "imprintPublisher": elem.find('imprint').find('imprintPublisher').text,
-            "collation": elem.find('collation').text,
-            "publicationPlaceCity": elem.find('publicationPlace').find('publicationPlaceCity').text,
-            "publicationPlaceComposed": elem.find('publicationPlace').find('publicationPlaceComposed').text,
-            "totalPages": elem.find('totalPages').text
-        }
+        # citation = {
+        #     "PSMID": PSMID,
+        #     "author_role": elem.find('authorGroup').attrib['role'],
+        #     "author_composed": elem.find('authorGroup').find('author').find('composed').text,
+        #     "author_first": elem.find('authorGroup').find('author').find('first').text,
+        #     "author_middle": elem.find('authorGroup').find('author').find('middle').text,
+        #     "author_last": elem.find('authorGroup').find('author').find('last').text,
+        #     "author_birthDate": elem.find('authorGroup').find('author').find('birthDate').text,
+        #     "author_deathDate": elem.find('authorGroup').find('author').find('deathDate').text,
+        #     "fullTitle": elem.find('titleGroup').find('fullTitle').text,
+        #     "displayTitle": elem.find('titleGroup').find('displayTitle').text,
+        #     "variantTitle": elem.find('titleGroup').find('variantTitle').text,
+        #     "edition": elem.find('edition').text,
+        #     "editionStatement": elem.find('editionStatement').text,
+        #     "currentVolume": elem.find('volumeGroup').find('currentVolume').text,
+        #     "volume": elem.find('volumeGroup').find('Volume').text,
+        #     "totalVolumes": elem.find('volumeGroup').find('totalVolumes').text,
+        #     "imprintFull": elem.find('imprint').find('imprintFull').text,
+        #     "imprintPublisher": elem.find('imprint').find('imprintPublisher').text,
+        #     "collation": elem.find('collation').text,
+        #     "publicationPlaceCity": elem.find('publicationPlace').find('publicationPlaceCity').text,
+        #     "publicationPlaceComposed": elem.find('publicationPlace').find('publicationPlaceComposed').text,
+        #     "totalPages": elem.find('totalPages').text
+        # }
+        citation = [
+            PSMID,
+            elem.find('authorGroup').attrib['role'],
+            elem.find('authorGroup').find('author').find('composed').text,
+            elem.find('authorGroup').find('author').find('first').text,
+            elem.find('authorGroup').find('author').find('middle').text,
+            elem.find('authorGroup').find('author').find('last').text,
+            elem.find('authorGroup').find('author').find('birthDate').text,
+            elem.find('authorGroup').find('author').find('deathDate').text,
+            elem.find('titleGroup').find('fullTitle').text,
+            elem.find('titleGroup').find('displayTitle').text,
+            elem.find('titleGroup').find('variantTitle').text,
+            elem.find('edition').text,
+            elem.find('editionStatement').text,
+            elem.find('volumeGroup').find('currentVolume').text,
+            elem.find('volumeGroup').find('Volume').text,
+            elem.find('volumeGroup').find('totalVolumes').text,
+            elem.find('imprint').find('imprintFull').text,
+            elem.find('imprint').find('imprintPublisher').text,
+            elem.find('collation').text,
+            elem.find('publicationPlace').find('publicationPlaceCity').text,
+            elem.find('publicationPlace').find('publicationPlaceComposed').text,
+            elem.find('totalPages').text
+        ]
         # print(citation)
 
     # Get Book_Subject
     subject_list = []
     for elem in root.iter('subject'):
-        subject = {
-            "PSMID": PSMID,
-            "subject": elem.text,
-            "source": elem.attrib['source']
-        }
+        # subject = {
+        #     "PSMID": PSMID,
+        #     "subject": elem.text,
+        #     "source": elem.attrib['source']
+        # }
+        subject = [
+            PSMID,
+            elem.text,
+            elem.attrib['source']
+        ]
         subject_list.append(subject)
 
     # Get Book_volumeSet
     volumeSet_list = []
     for elem in root.iter('filmedVolume'):
-        volumeSet = {
-            "PSMID": PSMID,
-            "volumeID": elem.attrib['volumeID'],
-            "assetID": elem.attrib['assetID'],
-            "filmedVolume": elem.text
-        }
+        # volumeSet = {
+        #     "PSMID": PSMID,
+        #     "volumeID": elem.attrib['volumeID'],
+        #     "assetID": elem.attrib['assetID'],
+        #     "filmedVolume": elem.text
+        # }
+        volumeSet = [
+            PSMID,
+            elem.attrib['volumeID'],
+            elem.attrib['assetID'],
+            elem.text
+        ]
         volumeSet_list.append(volumeSet)
 
     # Get Book_locSubjectHead
     locSubjectHead_list = []
     for elem in root.iter('locSubjectHead'):
         for locSubject in elem.iter('locSubject'):
-            locSubjectHead = {
-                "PSMID": PSMID,
-                "type": elem.attrib['type'],
-                "subField": locSubject.attrib['subField'],
-                "locSubject": locSubject.text
-            }
+            # locSubjectHead = {
+            #     "PSMID": PSMID,
+            #     "type": elem.attrib['type'],
+            #     "subField": locSubject.attrib['subField'],
+            #     "locSubject": locSubject.text
+            # }
+            locSubjectHead = [
+                PSMID,
+                elem.attrib['type'],
+                locSubject.attrib['subField'],
+                locSubject.text
+            ]
             locSubjectHead_list.append(locSubjectHead)
 
     # Get Page and Page Content
@@ -266,22 +341,39 @@ def get_book_metadata(book_name):
             # Get corresponding text
             sourcePage = sourcePage.text
 
-        page = {
-            "pageID": elem.find('pageInfo').find('pageID').text,
-            "PSMID": PSMID,
-            "type": elem.attrib['type'],
-            "firstPage": elem.attrib['firstPage'],
-            "assetID": elem.find('pageInfo').find('assetID').text,
-            "ocrLanguage": elem.find('pageInfo').find('ocrLanguage').text,
-            "sourcePage": sourcePage,
-            "ocr": elem.find('pageInfo').find('ocr').text,
-            "imageLink_pageIndicator": elem.find('pageInfo').find('imageLink').attrib['pageIndicator'],
-            "imageLink_width": elem.find('pageInfo').find('imageLink').attrib['width'],
-            "imageLink_height": elem.find('pageInfo').find('imageLink').attrib['height'],
-            "imageLink_type": elem.find('pageInfo').find('imageLink').attrib['type'],
-            "imageLink_colorimage": elem.find('pageInfo').find('imageLink').attrib['colorimage'],
-            "imageLink": elem.find('pageInfo').find('imageLink').text
-        }
+        # page = {
+        #     "pageID": elem.find('pageInfo').find('pageID').text,
+        #     "PSMID": PSMID,
+        #     "type": elem.attrib['type'],
+        #     "firstPage": elem.attrib['firstPage'],
+        #     "assetID": elem.find('pageInfo').find('assetID').text,
+        #     "ocrLanguage": elem.find('pageInfo').find('ocrLanguage').text,
+        #     "sourcePage": sourcePage,
+        #     "ocr": elem.find('pageInfo').find('ocr').text,
+        #     "imageLink_pageIndicator": elem.find('pageInfo').find('imageLink').attrib['pageIndicator'],
+        #     "imageLink_width": elem.find('pageInfo').find('imageLink').attrib['width'],
+        #     "imageLink_height": elem.find('pageInfo').find('imageLink').attrib['height'],
+        #     "imageLink_type": elem.find('pageInfo').find('imageLink').attrib['type'],
+        #     "imageLink_colorimage": elem.find('pageInfo').find('imageLink').attrib['colorimage'],
+        #     "imageLink": elem.find('pageInfo').find('imageLink').text
+        # }
+
+        page = [
+            elem.find('pageInfo').find('pageID').text,
+            PSMID,
+            elem.attrib['type'],
+            elem.attrib['firstPage'],
+            elem.find('pageInfo').find('assetID').text,
+            elem.find('pageInfo').find('ocrLanguage').text,
+            sourcePage,
+            elem.find('pageInfo').find('ocr').text,
+            elem.find('pageInfo').find('imageLink').attrib['pageIndicator'],
+            elem.find('pageInfo').find('imageLink').attrib['width'],
+            elem.find('pageInfo').find('imageLink').attrib['height'],
+            elem.find('pageInfo').find('imageLink').attrib['type'],
+            elem.find('pageInfo').find('imageLink').attrib['colorimage'],
+            elem.find('pageInfo').find('imageLink').text
+        ]
         page_list.append(page)
 
         # Check if pageContent exists first
@@ -289,12 +381,19 @@ def get_book_metadata(book_name):
             # Loop through all section Headers
             # There may be multiple sectionHeaders
             for sectionHeaders in elem.iter('sectionHeader'):
-                pageContent = {
-                    "pageID": elem.find('pageInfo').find('pageID').text,
-                    "PSMID": PSMID,
-                    "sectionHeader_type": sectionHeaders.attrib['type'],
-                    "sectionHeader": sectionHeaders.text
-                }
+                # pageContent = {
+                #     "pageID": elem.find('pageInfo').find('pageID').text,
+                #     "PSMID": PSMID,
+                #     "sectionHeader_type": sectionHeaders.attrib['type'],
+                #     "sectionHeader": sectionHeaders.text
+                # }
+
+                pageContent = [
+                    elem.find('pageInfo').find('pageID').text,
+                    PSMID,
+                    sectionHeaders.attrib['type'],
+                    sectionHeaders.text
+                ]
                 pageContent_list.append(pageContent)
 
     # Get Page OCR Text
@@ -303,18 +402,67 @@ def get_book_metadata(book_name):
 
     ocrText_list = []
     for elem in root_ocr.iter('page'):
-        ocrText = {
-            "pageID": elem.attrib['id'],
-            "PSMID": PSMID,
-            "ocrText": elem.find('ocrText').text,
-        }
+        # ocrText = {
+        #     "pageID": elem.attrib['id'],
+        #     "PSMID": PSMID,
+        #     "ocrText": elem.find('ocrText').text,
+        # }
+        ocrText = [
+            elem.attrib['id'],
+            PSMID,
+            elem.find('ocrText').text,
+        ]
         ocrText_list.append(ocrText)
 
-    return
+    output = {
+        "bookInfo": bookInfo,
+        "citation": citation,
+        "subject_list": subject_list,
+        "volumeSet_list": volumeSet_list,
+        "locSubjectHead_list": locSubjectHead_list,
+        "page_list": page_list,
+        "pageContent_list": pageContent_list,
+        "ocrText_list": ocrText_list
+    }
+
+    return output
 
 
-def get_page_text(book_name):
-    return
+def get_legal_treatises_metadata():
+    filepath_legal_treatises_metadata = os.path.join('./example_moml/', 'TheMakingofModernLaw_LegalTreatises.csv')
+    # with open(filepath_legal_treatises_metadata, newline='') as csvfile:
+    #     reader = csv.reader(csvfile, delimiter=',')
+    #     print(reader)
+        # for row in reader:
+        #     print(', '.join(row))
+
+    with open(filepath_legal_treatises_metadata, 'r') as file:
+        reader = csv.reader(file)
+
+        # Get heading
+        headings = next(reader)
+
+        books = []
+        for row in reader:
+            # Get Filename which contains PSMID using regex
+            match = re.search(".+?(?=_)", row[9])
+            PSMID = match.group()
+
+            # Get other attributes
+            book = [
+                PSMID,
+                row[0], # AuthorByline
+                row[1], # Title
+                row[2], # edition
+                row[3], # current_volume
+                row[4], # imprint
+                row[5], # collation
+                row[6], # pages
+            ]
+
+            books.append(book)
+
+    return books
 
 # def get_case(case_name):
 #     """Get a case (JSON) to insert into postgresql"""

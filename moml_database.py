@@ -49,20 +49,44 @@ def create_tables():
         if conn is not None:
             conn.close()
 
+
 def insert_book_info(list):
-    sql = """INSERT INTO Cases
-                (case_id,
-                name,
-                name_abbreviation,
-                decision_date,
-                docket_number,
-                first_page,
-                last_page,
-                frontend_url,
-                volume_number,
-                reporter_full_name)
+    sql = """INSERT INTO Book_Info
+                (PSMID,
+                contentType,
+                ID,
+                FAID,
+                COLID,
+                ocr,
+                assetID,
+                assetIDeTOC,
+                dviCollectionID,
+                bibliographicID,
+                bibliographicID_type,
+                unit,
+                ficheRange,
+                mcode,
+                pubDate_year,
+                pubDate_composed,
+                pubDate_pubDateStart,
+                releaseDate,
+                sourceLibrary_libraryName,
+                sourceLibrary_libraryLocation,
+                language,
+                language_ocr,
+                language_primary,
+                documentType,
+                notes,
+                categoryCode,
+                categoryCode_source,
+                ProductLink)
              VALUES
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+                (%s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s);"""
     conn = None
     try:
         # read database configuration
@@ -73,6 +97,274 @@ def insert_book_info(list):
         cur = conn.cursor()
         # execute the INSERT statement
         cur.execute(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_book_citation(list):
+    sql = """INSERT INTO Book_Citation
+                (PSMID,
+                author_role,
+                author_composed,
+                author_first,
+                author_middle,
+                author_last,
+                author_birthDate,
+                author_deathDate,
+                fullTitle,
+                displayTitle,
+                variantTitle,
+                edition,
+                editionStatement,
+                currentVolume,
+                volume,
+                totalVolume,
+                imprintFull,
+                imprintPublisher,
+                book_collation,
+                publicationPlaceCity,
+                publicationPlaceComposed,
+                totalPages)
+             VALUES
+                (%s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.execute(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_book_subject(list):
+    sql = """INSERT INTO Book_Subject
+                (PSMID,
+                subject,
+                source)
+             VALUES
+                (%s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_book_volume_set(list):
+    sql = """INSERT INTO Book_volumeSet
+                (PSMID,
+                volumeID,
+                assetID,
+                filmedVolume)
+             VALUES
+                (%s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_book_loc_subject_head(list):
+    sql = """INSERT INTO Book_locSubjectHead
+                (PSMID,
+                type,
+                subField,
+                locSubject)
+             VALUES
+                (%s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_page(list):
+    sql = """INSERT INTO Page
+                (pageID,
+                PSMID,
+                type,
+                firstPage,
+                assetID,
+                ocrLanguage,
+                sourcePage,
+                ocr,
+                imageLink_pageIndicator,
+                imageLink_width,
+                imageLink_height,
+                imageLink_type,
+                imageLink_colorimage,
+                imageLink)
+             VALUES
+                (%s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_page_content(list):
+    sql = """INSERT INTO Page_Content
+                (pageID,
+                PSMID,
+                sectionHeader_type,
+                sectionHeader)
+             VALUES
+                (%s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_page_ocr_text(list):
+    sql = """INSERT INTO Page_ocrText
+                (pageID,
+                PSMID,
+                ocrText)
+             VALUES
+                (%s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
+        # commit the changes to the database
+        conn.commit()
+        # close communication with the database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def insert_legal_treatises_metadata(list):
+    sql = """INSERT INTO Legal_Treatises_Metadata
+                (PSMID,
+                author_by_line,
+                title,
+                edition,
+                current_volume,
+                imprint,
+                book_collation,
+                pages)
+             VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s);"""
+    conn = None
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the INSERT statement
+        cur.executemany(sql, list)
         # commit the changes to the database
         conn.commit()
         # close communication with the database
