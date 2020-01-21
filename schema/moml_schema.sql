@@ -120,7 +120,7 @@ CREATE TABLE Page (
     imageLink_type VARCHAR(255),
     imageLink_colorimage VARCHAR(255),
     imageLink VARCHAR(255),
-    PRIMARY KEY (pageID),
+    PRIMARY KEY (pageID, PSMID),
     FOREIGN KEY (PSMID)
         REFERENCES Book_Info
 );

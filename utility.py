@@ -20,9 +20,9 @@ except ImportError:
     import xml.etree.ElementTree as ET
 
 
-def get_all_cap_entities(case_name):
-    filepath = os.path.join('../data/', case_name, 'data', 'data.jsonl.xz')
+def get_all_cap_entities(filepath):
 
+    # Open file
     with lzma.open(filepath) as in_file:
         for line in in_file:
             data = json.loads(str(line, 'utf8'))
@@ -76,80 +76,161 @@ def get_all_cap_entities(case_name):
     opinion = []
     attorneys = []
 
-    """TODO: Fix this:
-    5. for cases, need to get call casebody attributes and store it in cases
-    """
+    # Set Tag Prefix
+    TAG_PREFIX = "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}"
 
-    tag_prefix = "{http://nrs.harvard.edu/urn-3:HLS.Libr.US_Case_Law.Schema.Case_Body:v1}"
-    for elem in root.iter():
-        if elem.tag == tag_prefix + "judges":
-            case_id = data['id']
-            judges_id = elem.attrib['id']
-            judges_text = ET.tostring(elem, method='text').decode()
-            judges.append([case_id, judges_id, judges_text])
-        elif elem.tag == tag_prefix + "parties":
-            case_id = data['id']
-            parties_id = elem.attrib['id']
-            parties_text = ET.tostring(elem, method='text').decode()
-            parties.append([case_id, parties_id, parties_text])
-        elif elem.tag == tag_prefix + "headnotes":
-            case_id = data['id']
-            headnotes_id = elem.attrib['id']
-            headnotes_text = ET.tostring(elem, method='text').decode()
-            headnotes.append([case_id, headnotes_id, headnotes_text])
-        elif elem.tag == tag_prefix + "summary":
-            case_id = data['id']
-            summary_id = elem.attrib['id']
-            summary_text = ET.tostring(elem, method='text').decode()
-            summary.append([case_id, summary_id, summary_text])
-        elif elem.tag == tag_prefix + "opinion":
-            case_id = data['id']
-            opinion_type = elem.attrib['type']
-            for child in elem:
-                if child.tag == tag_prefix + "p":
-                    text_type = "paragraph"
-                    text_id = child.attrib['id']
-                    text = ET.tostring(child, method='text').decode()
-                    opinion.append(
-                        [case_id, opinion_type, text_type, text_id, text])
-                if child.tag == tag_prefix + "author":
-                    text_type = "author"
-                    text_id = child.attrib['id']
-                    text = ET.tostring(child, method='text').decode()
-                    opinion.append(
-                        [case_id, opinion_type, text_type, text_id, text])
-                if child.tag == tag_prefix + "judges":
-                    text_type = "judges"
-                    text_id = child.attrib['id']
-                    text = ET.tostring(child, method='text').decode()
-                    opinion.append(
-                        [case_id, opinion_type, text_type, text_id, text])
-                if child.tag == tag_prefix + "footnote":
-                    for grandchild in child:
-                        text_type = "footnote"
-                        text_id = grandchild.attrib['id']
-                        text = ET.tostring(grandchild, method='text').decode()
-                        opinion.append(
-                            [case_id, opinion_type, text_type, text_id, text])
-        elif elem.tag == tag_prefix + "attorneys":
-            case_id = data['id']
-            attorneys_id = elem.attrib['id']
-            attorneys_text = ET.tostring(elem, method='text').decode()
-            attorneys.append([case_id, attorneys_id, attorneys_text])
-        else:
-            # Else do something here
-            pass
+    # Get parties
+    for elem in root.iter(TAG_PREFIX + "parties"):
+        parties.append([
+            data['id'],  # case_id
+            elem.attrib['id'],  # parties_id,
+            ET.tostring(elem, method='text').decode()  # parties_text
+        ])
 
-    return case, citations, jurisdiction, court, parties, judges, \
-        attorneys, headnotes, summary, opinion
+    # Get judges
+    for elem in root.iter(TAG_PREFIX + "judges"):
+        judges.append([
+            data['id'],  # case_id
+            elem.attrib['id'],  # judges_id
+            ET.tostring(elem, method='text').decode(),  # judges_text
+        ])
 
+    # Get headnotes
+    for elem in root.iter(TAG_PREFIX + "headnotes"):
+        headnotes.append([
+            data['id'],
+            elem.attrib['id'],  # headnotes_id
+            ET.tostring(elem, method='text').decode()  # headnotes_text
+        ])
 
-def get_legal_treatises_metadata(book_name):
-    return
+    # Get summary
+    for elem in root.iter(TAG_PREFIX + "summary"):
+        summary.append([
+            data['id'],
+            elem.attrib['id'],  # summary_id
+            ET.tostring(elem, method='text').decode(),  # summary_text
+        ])
 
+    # Get opinion
+    for elem in root.iter(TAG_PREFIX + "opinion"):
+        for child in elem:
+            if child.tag == TAG_PREFIX + "p":
+                opinion.append([
+                    data['id'],  # case_id
+                    elem.attrib['type'],  # opinion_type
+                    "p",  # text_type
+                    child.attrib['id'],  # text_id
+                    ET.tostring(child, method='text').decode()  # text
+                ])
+            if child.tag == TAG_PREFIX + "author":
+                opinion.append([
+                    data['id'],  # case_id
+                    elem.attrib['type'],  # opinion_type
+                    "author",  # text_type
+                    child.attrib['id'],  # text_id
+                    ET.tostring(child, method='text').decode()  # text
+                ])
+            if child.tag == TAG_PREFIX + "judges":
+                opinion.append([
+                    data['id'],  # case_id
+                    elem.attrib['type'],  # opinion_type
+                    "judges",  # text_type
+                    child.attrib['id'],  # text_id
+                    ET.tostring(child, method='text').decode()  # text
+                ])
+            if child.tag == TAG_PREFIX + "footnote":
+                for grandchild in child:
+                    opinion.append([
+                        data['id'],  # case_id
+                        elem.attrib['type'],  # opinion_type
+                        "footnote",  # text_type
+                        child.attrib['id'],  # text_id
+                        ET.tostring(child, method='text').decode()  # text
+                    ])
 
-def get_book_metadata(book_name):
-    filepath_meta = os.path.join('./example_moml/', '20001735402_DocMetadata.xml')
+    # Get attorneys
+    for elem in root.iter(TAG_PREFIX + "attorneys"):
+        attorneys.append([
+            data['id'],
+            elem.attrib['id'],  # attorneys_id
+            ET.tostring(elem, method='text').decode(),  # attorneys_text
+        ])
+
+    # for elem in root.iter():
+    #     if elem.tag == TAG_PREFIX + "judges":
+    #         case_id = data['id']
+    #         judges_id = elem.attrib['id']
+    #         judges_text = ET.tostring(elem, method='text').decode()
+    #         judges.append([case_id, judges_id, judges_text])
+    #     elif elem.tag == TAG_PREFIX + "parties":
+    #         case_id = data['id']
+    #         parties_id = elem.attrib['id']
+    #         parties_text = ET.tostring(elem, method='text').decode()
+    #         parties.append([case_id, parties_id, parties_text])
+    #     elif elem.tag == TAG_PREFIX + "headnotes":
+    #         case_id = data['id']
+    #         headnotes_id = elem.attrib['id']
+    #         headnotes_text = ET.tostring(elem, method='text').decode()
+    #         headnotes.append([case_id, headnotes_id, headnotes_text])
+    #     elif elem.tag == TAG_PREFIX + "summary":
+    #         case_id = data['id']
+    #         summary_id = elem.attrib['id']
+    #         summary_text = ET.tostring(elem, method='text').decode()
+    #         summary.append([case_id, summary_id, summary_text])
+    #     elif elem.tag == TAG_PREFIX + "opinion":
+    #         case_id = data['id']
+    #         opinion_type = elem.attrib['type']
+    #         for child in elem:
+    #             if child.tag == TAG_PREFIX + "p":
+    #                 text_type = "paragraph"
+    #                 text_id = child.attrib['id']
+    #                 text = ET.tostring(child, method='text').decode()
+    #                 opinion.append(
+    #                     [case_id, opinion_type, text_type, text_id, text])
+    #             if child.tag == TAG_PREFIX + "author":
+    #                 text_type = "author"
+    #                 text_id = child.attrib['id']
+    #                 text = ET.tostring(child, method='text').decode()
+    #                 opinion.append(
+    #                     [case_id, opinion_type, text_type, text_id, text])
+    #             if child.tag == TAG_PREFIX + "judges":
+    #                 text_type = "judges"
+    #                 text_id = child.attrib['id']
+    #                 text = ET.tostring(child, method='text').decode()
+    #                 opinion.append(
+    #                     [case_id, opinion_type, text_type, text_id, text])
+    #             if child.tag == TAG_PREFIX + "footnote":
+    #                 for grandchild in child:
+    #                     text_type = "footnote"
+    #                     text_id = grandchild.attrib['id']
+    #                     text = ET.tostring(grandchild, method='text').decode()
+    #                     opinion.append(
+    #                         [case_id, opinion_type, text_type, text_id, text])
+    #     elif elem.tag == TAG_PREFIX + "attorneys":
+    #         case_id = data['id']
+    #         attorneys_id = elem.attrib['id']
+    #         attorneys_text = ET.tostring(elem, method='text').decode()
+    #         attorneys.append([case_id, attorneys_id, attorneys_text])
+    #     else:
+    #         # Else do something here
+    #         pass
+
+    output = {
+        "case": case,
+        "citations": citations,
+        "jurisdiction": jurisdiction,
+        "court": court,
+        "parties": parties,
+        "judges": judges,
+        "attorneys": attorneys,
+        "headnotes": headnotes,
+        "summary": summary,
+        "opinion": opinion
+    }
+
+    return output
+
+def get_book_metadata(filepath_meta, filepath_page=None):
     root = ET.parse(filepath_meta)
 
     # Get PSMID
@@ -212,7 +293,7 @@ def get_book_metadata(book_name):
             elem.find('unit').text,
             elem.find('ficheRange').text,
             elem.find('mcode').text,
-            elem.find('pubDate').find('year').text,
+            elem.find('pubDate').find('year').text if elem.find('pubDate').find('year') else None,
             elem.find('pubDate').find('composed').text,
             elem.find('pubDate').find('pubDateStart').text,
             elem.find('releaseDate').text,
@@ -222,7 +303,7 @@ def get_book_metadata(book_name):
             elem.find('language').attrib['ocr'],
             elem.find('language').attrib['primary'],
             elem.find('documentType').text,
-            elem.find('notes').text,
+            elem.find('notes').text if elem.find('notes') else None,
             elem.find('categoryCode').text,
             elem.find('categoryCode').attrib['source'],
             elem.find('ProductLink').text,
@@ -255,20 +336,22 @@ def get_book_metadata(book_name):
         #     "publicationPlaceComposed": elem.find('publicationPlace').find('publicationPlaceComposed').text,
         #     "totalPages": elem.find('totalPages').text
         # }
+
+
         citation = [
             PSMID,
             elem.find('authorGroup').attrib['role'],
             elem.find('authorGroup').find('author').find('composed').text,
             elem.find('authorGroup').find('author').find('first').text,
-            elem.find('authorGroup').find('author').find('middle').text,
+            elem.find('authorGroup').find('author').find('middle').text if elem.find('authorGroup').find('author').find('middle') else None,
             elem.find('authorGroup').find('author').find('last').text,
             elem.find('authorGroup').find('author').find('birthDate').text,
             elem.find('authorGroup').find('author').find('deathDate').text,
             elem.find('titleGroup').find('fullTitle').text,
             elem.find('titleGroup').find('displayTitle').text,
-            elem.find('titleGroup').find('variantTitle').text,
-            elem.find('edition').text,
-            elem.find('editionStatement').text,
+            elem.find('titleGroup').find('variantTitle').text if elem.find('titleGroup').find('variantTitle') else None,
+            elem.find('edition').text if elem.find('edition') else None,
+            elem.find('editionStatement').text if elem.find('editionStatement') else None,
             elem.find('volumeGroup').find('currentVolume').text,
             elem.find('volumeGroup').find('Volume').text,
             elem.find('volumeGroup').find('totalVolumes').text,
@@ -397,8 +480,7 @@ def get_book_metadata(book_name):
                 pageContent_list.append(pageContent)
 
     # Get Page OCR Text
-    filepath_ocr = os.path.join('./example_moml/', '20001735402_PageText.xml')
-    root_ocr = ET.parse(filepath_ocr)
+    root_ocr = ET.parse(filepath_page)
 
     ocrText_list = []
     for elem in root_ocr.iter('page'):
@@ -428,19 +510,13 @@ def get_book_metadata(book_name):
     return output
 
 
-def get_legal_treatises_metadata():
-    filepath_legal_treatises_metadata = os.path.join('./example_moml/', 'TheMakingofModernLaw_LegalTreatises.csv')
-    # with open(filepath_legal_treatises_metadata, newline='') as csvfile:
-    #     reader = csv.reader(csvfile, delimiter=',')
-    #     print(reader)
-        # for row in reader:
-        #     print(', '.join(row))
+def get_legal_treatises_metadata(filepath_legal_treatises_metadata):
 
     with open(filepath_legal_treatises_metadata, 'r') as file:
         reader = csv.reader(file)
 
         # Get heading
-        headings = next(reader)
+        _ = next(reader)
 
         books = []
         for row in reader:
@@ -451,13 +527,13 @@ def get_legal_treatises_metadata():
             # Get other attributes
             book = [
                 PSMID,
-                row[0], # AuthorByline
-                row[1], # Title
-                row[2], # edition
-                row[3], # current_volume
-                row[4], # imprint
-                row[5], # collation
-                row[6], # pages
+                row[0],  # AuthorByline
+                row[1],  # Title
+                row[2],  # edition
+                row[3],  # current_volume
+                row[4],  # imprint
+                row[5],  # collation
+                row[6],  # pages
             ]
 
             books.append(book)
