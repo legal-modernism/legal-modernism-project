@@ -20,12 +20,8 @@ except ImportError:
     import xml.etree.ElementTree as ET
 
 
-def get_all_cap_entities(filepath):
-
-    # Open file
-    with lzma.open(filepath) as in_file:
-        for line in in_file:
-            data = json.loads(str(line, 'utf8'))
+def get_all_cap_entities(data):
+    
 
     # Get cases
     case = [
@@ -144,7 +140,7 @@ def get_all_cap_entities(filepath):
                         data['id'],  # case_id
                         elem.attrib['type'],  # opinion_type
                         "footnote",  # text_type
-                        child.attrib['id'],  # text_id
+                        grandchild.attrib['id'],  # text_id
                         ET.tostring(child, method='text').decode()  # text
                     ])
 
@@ -337,16 +333,37 @@ def get_book_metadata(filepath_meta, filepath_page=None):
         #     "totalPages": elem.find('totalPages').text
         # }
 
+        # Tricky: Handle author
+        role = composed = first = middle = last = birthDate = deathDate = None
+        if elem.find('authorGroup'):
+            # Get role if exists
+            if 'role' in elem.find('authorGroup').attrib:
+                role = elem.find('authorGroup').attrib['role']
+            # Get other attributes
+            if elem.find('authorGroup').find('author'):
+                author = elem.find('authorGroup').find('author')
+                if author.find('composed'):
+                    composed = author.find('composed').text
+                if author.find('first'):
+                    first = author.find('first').text
+                if author.find('middle'):
+                    middle = author.find('middle').text
+                if author.find('last'):
+                    last = author.find('last').text
+                if author.find('birthDate'):
+                    birthDate = author.find('birthDate').text
+                if author.find('deathDate'):
+                    deathDate = author.find('deathDate').text
 
         citation = [
             PSMID,
-            elem.find('authorGroup').attrib['role'],
-            elem.find('authorGroup').find('author').find('composed').text,
-            elem.find('authorGroup').find('author').find('first').text,
-            elem.find('authorGroup').find('author').find('middle').text if elem.find('authorGroup').find('author').find('middle') else None,
-            elem.find('authorGroup').find('author').find('last').text,
-            elem.find('authorGroup').find('author').find('birthDate').text,
-            elem.find('authorGroup').find('author').find('deathDate').text,
+            role, # elem.find('authorGroup').attrib['role'] if 'role' in elem.find('authorGroup').attrib else None,
+            composed, # elem.find('authorGroup').find('author').find('composed').text if elem.find('authorGroup').find('author').find('composed') else None,
+            first, # elem.find('authorGroup').find('author').find('first').text,
+            middle, # elem.find('authorGroup').find('author').find('middle').text if elem.find('authorGroup').find('author').find('middle') else None,
+            last, # elem.find('authorGroup').find('author').find('last').text,
+            birthDate, # elem.find('authorGroup').find('author').find('birthDate').text if elem.find('authorGroup').find('author').find('birthDate') else None,
+            deathDate, # elem.find('authorGroup').find('author').find('deathDate').text if elem.find('authorGroup').find('author').find('deathDate') else None,
             elem.find('titleGroup').find('fullTitle').text,
             elem.find('titleGroup').find('displayTitle').text,
             elem.find('titleGroup').find('variantTitle').text if elem.find('titleGroup').find('variantTitle') else None,
@@ -356,7 +373,7 @@ def get_book_metadata(filepath_meta, filepath_page=None):
             elem.find('volumeGroup').find('Volume').text,
             elem.find('volumeGroup').find('totalVolumes').text,
             elem.find('imprint').find('imprintFull').text,
-            elem.find('imprint').find('imprintPublisher').text,
+            elem.find('imprint').find('imprintPublisher').text if elem.find('imprint').find('imprintPublisher') else None,
             elem.find('collation').text,
             elem.find('publicationPlace').find('publicationPlaceCity').text,
             elem.find('publicationPlace').find('publicationPlaceComposed').text,

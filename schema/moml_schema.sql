@@ -76,7 +76,7 @@ CREATE TABLE Book_Citation (
     publicationPlaceComposed VARCHAR(255),
     totalPages VARCHAR(255), -- INTEGER
     FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+        REFERENCES Book_Info (PSMID)
 );
 
 CREATE TABLE Book_Subject (
@@ -84,7 +84,7 @@ CREATE TABLE Book_Subject (
     subject VARCHAR(255),
     source VARCHAR(255),
     FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+        REFERENCES Book_Info (PSMID)
 );
 
 CREATE TABLE Book_volumeSet (
@@ -93,7 +93,7 @@ CREATE TABLE Book_volumeSet (
     assetID VARCHAR(255),
     filmedVolume VARCHAR(255),
     FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+        REFERENCES Book_Info (PSMID)
 );
 
 CREATE TABLE Book_locSubjectHead (
@@ -102,7 +102,7 @@ CREATE TABLE Book_locSubjectHead (
     subField VARCHAR(255),
     locSubject VARCHAR(255),
     FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+        REFERENCES Book_Info (PSMID)
 );
 
 CREATE TABLE Page (
@@ -122,26 +122,28 @@ CREATE TABLE Page (
     imageLink VARCHAR(255),
     PRIMARY KEY (pageID, PSMID),
     FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+        REFERENCES Book_Info (PSMID)
 );
 
+
+-- THERE IS A PROBLEM HERE
 CREATE TABLE Page_Content (
     pageID VARCHAR(255),
     PSMID VARCHAR(255),
     sectionHeader_type VARCHAR(255),
     sectionHeader VARCHAR(255),
-    FOREIGN KEY (pageID)
-        REFERENCES Page,
-    FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+    FOREIGN KEY (pageID, PSMID)
+        REFERENCES Page (pageID, PSMID)--,
+    -- FOREIGN KEY (PSMID)
+    --    REFERENCES Book_Info (PSMID)
 );
 
 CREATE TABLE Page_ocrText (
     pageID VARCHAR(255),
     PSMID VARCHAR(255),
     ocrText TEXT,
-    FOREIGN KEY (pageID)
-        REFERENCES Page,
-    FOREIGN KEY (PSMID)
-        REFERENCES Book_Info
+    FOREIGN KEY (pageID, PSMID)
+        REFERENCES Page (pageID, PSMID)--,
+    -- FOREIGN KEY (PSMID)
+    --     REFERENCES Book_Info (PSMID)
 );

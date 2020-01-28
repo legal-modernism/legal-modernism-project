@@ -10,7 +10,7 @@ import psycopg2
 from configparser import ConfigParser
 
 
-def config(filename='database.ini', section='postgresql'):
+def config(filename='database_moml.ini', section='postgresql'):
     """Utility function for configuring psycopg2"""
     # create a parser
     parser = ConfigParser()

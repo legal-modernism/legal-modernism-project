@@ -13,6 +13,9 @@ import progressbar
 import psycopg2
 import re
 import traceback
+import logging
+import lzma
+import json
 
 import cap_database as cap_db
 import moml_database as moml_db
@@ -21,17 +24,21 @@ import utility as util
 
 if __name__ == "__main__":
 
+    # Directory of CAP
+    CAP_DIR = '../cap/'
+    MOML_DIR = '../moml/'
+
+    # Download CAP data
     if False:
-        # Download CAP data
         cap_api.download_cap_data()
 
-    if False:
+    if True:
         # Get files
         subfolders = [os.path.basename(f.path)
-                      for f in os.scandir('../data/') if f.is_dir()]
+                      for f in os.scandir(CAP_DIR) if f.is_dir()]
 
-    if False:
-        # Tabulates CAP data
+    # Tabulates CAP data
+    if True:
         # Run schema
         cap_db.create_tables()
 
@@ -41,39 +48,43 @@ if __name__ == "__main__":
                 progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         bar.start()
 
-        """
-        TODO: create a log file for errors
-        """
+        # Add logging for files that failed
+        CAP_LOG_FILENAME = 'cap_errors.log'
+        logging.basicConfig(filename=CAP_LOG_FILENAME, level=logging.DEBUG)
+
+        # Iterate through all subfolders
         for i, name in enumerate(subfolders):
             bar.update(i + 1)
-            try:
-                # Get filepath
-                filepath = os.path.join('../data/', name, 'data', 'data.jsonl.xz')
 
-                # Get a dictionary of entities
-                case = util.get_all_cap_entities(filepath)
+            # Get filepath of subfolder
+            filepath = os.path.join(CAP_DIR, name, 'data', 'data.jsonl.xz')
 
-                # Tabulate
-                cap_db.insert_cases(case["case"])
-                cap_db.insert_citations(case["citations"])
-                cap_db.insert_jurisdiction(case["jurisdiction"])
-                cap_db.insert_courts(case["court"])
-                cap_db.insert_parties(case["parties"])
-                cap_db.insert_judges(case["judges"])
-                cap_db.insert_attorneys(case["attorneys"])
-                cap_db.insert_headnotes(case["headnotes"])
-                cap_db.insert_summary(case["summary"])
-                cap_db.insert_opinion(case["opinion"])
-            except (Exception, psycopg2.DatabaseError) as error:
-                print("Error in: " + name)
-                print("Message: " + error)
+            with lzma.open(filepath, mode='rt') as file:
+                # For each subfolder, iterate through all cases
+                for line in file:
+                    data = json.loads(line)
+                    case = util.get_all_cap_entities(data)
+                    try:
+                        # Get a dictionary of entities
+                        cap_db.insert_cases(case["case"])
+                        cap_db.insert_citations(case["citations"])
+                        cap_db.insert_jurisdiction(case["jurisdiction"])
+                        cap_db.insert_courts(case["court"])
+                        cap_db.insert_parties(case["parties"])
+                        cap_db.insert_judges(case["judges"])
+                        cap_db.insert_attorneys(case["attorneys"])
+                        cap_db.insert_headnotes(case["headnotes"])
+                        cap_db.insert_summary(case["summary"])
+                        cap_db.insert_opinion(case["opinion"])
+                    except (Exception, psycopg2.DatabaseError) as error:
+                        # print(traceback.format_exc())
+                        # print("Error in: " + name)
+                        # print(error)
+                        logging.debug(traceback.format_exc())
         bar.finish()
 
-
-    moml_db.create_tables()
-
-    if False:
-        # Tabulate MOML data
+    # Tabulate MOML data
+    if True:
         # Run schema
         moml_db.create_tables()
 
@@ -85,13 +96,22 @@ if __name__ == "__main__":
         legal_treatises_metadata = util.get_legal_treatises_metadata(filepath_legal_treatises_metadata)
         moml_db.insert_legal_treatises_metadata(legal_treatises_metadata)
 
-        # Get file dir
-        path_moml_f1 = os.path.join('../moml/', 'MOMLF0001-C00000', 'MONOGRAPHS')
-        path_moml_f2 = os.path.join('../moml/', 'MOMLF00012-C00000', 'MONOGRAPHS')
+        # Add logging for files that failed
+        MOML_LOG_FILENAME = 'moml_errors.log'
+        logging.basicConfig(filename=MOML_LOG_FILENAME, level=logging.DEBUG)
 
-        # Get all .xml files
-        i = 0
-        for filename_meta in os.listdir(path_moml_f1):
+
+        # Get file dir for first folder
+        path_moml_f1 = os.path.join(MOML_DIR, 'MOMLF0001-C00000', 'MONOGRAPHS')
+        # Track progress
+        bar = progressbar.ProgressBar(
+            maxval=len(os.listdir(path_moml_f1)), widgets=[
+                progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        bar.start()
+
+        for i, filename_meta in enumerate(os.listdir(path_moml_f1)):
+            bar.update(i + 1)
+
             # Handle Metadata first
             if filename_meta.endswith('_DocMetadata.xml'):
                 # Then get PageText using regex
@@ -105,24 +125,58 @@ if __name__ == "__main__":
                 try:
                     book = util.get_book_metadata(filepath_meta, filepath_page)
 
-                    """
-                    NOTE: Create connection once only
-                    THEN close connection once only after insert many
-                    """
                     moml_db.insert_book_info(book['bookInfo'])
                     moml_db.insert_book_citation(book['citation'])
                     moml_db.insert_book_subject(book['subject_list'])
                     moml_db.insert_book_volume_set(book['volumeSet_list'])
-                    moml_db.insert_book_loc_subject_head(book['locSubjectHead_list'])
+                    moml_db.insert_book_loc_subject_head(
+                        book['locSubjectHead_list'])
                     moml_db.insert_page(book['page_list'])
                     moml_db.insert_page_content(book['pageContent_list'])
                     moml_db.insert_page_ocr_text(book['ocrText_list'])
                 except (Exception, psycopg2.DatabaseError) as error:
-                    print(traceback.format_exc())
-                    print("Error in: " + filename_meta)
-                    print("Message: " + str(error))
+                    # print(traceback.format_exc())
+                    # print("Error in: " + filename_meta)
+                    # print("Message: " + str(error))
+                    logging.debug(traceback.format_exc())
+        bar.finish()
 
-                i += 1
-                print(i)
-                if i == 3:
-                    break
+        # Repeat for second folder of MOML
+        path_moml_f2 = os.path.join(MOML_DIR, 'MOMLF0002-C00000', 'MONOGRAPHS')
+        # Track progress
+        bar = progressbar.ProgressBar(
+            maxval=len(os.listdir(path_moml_f2)), widgets=[
+                progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        bar.start()
+
+        for i, filename_meta in enumerate(os.listdir(path_moml_f2)):
+            bar.update(i + 1)
+
+            # Handle Metadata first
+            if filename_meta.endswith('_DocMetadata.xml'):
+                # Then get PageText using regex
+                filename_page = re.search('[^(.*?)\_]*', filename_meta).group()
+                filename_page += '_PageText.xml'
+
+                # Get file directory here instead of filename
+                filepath_meta = os.path.join(path_moml_f2, filename_meta)
+                filepath_page = os.path.join(path_moml_f2, filename_page)
+
+                try:
+                    book = util.get_book_metadata(filepath_meta, filepath_page)
+                    moml_db.insert_book_info(book['bookInfo'])
+                    moml_db.insert_book_citation(book['citation'])
+                    moml_db.insert_book_subject(book['subject_list'])
+                    moml_db.insert_book_volume_set(book['volumeSet_list'])
+                    moml_db.insert_book_loc_subject_head(
+                        book['locSubjectHead_list'])
+                    moml_db.insert_page(book['page_list'])
+                    moml_db.insert_page_content(book['pageContent_list'])
+                    moml_db.insert_page_ocr_text(book['ocrText_list'])
+                except (Exception, psycopg2.DatabaseError) as error:
+                    # print(traceback.format_exc())
+                    # print("Error in: " + filename_meta)
+                    # print("Message: " + str(error))
+                    logging.debug(traceback.format_exc())
+
+        bar.finish()
