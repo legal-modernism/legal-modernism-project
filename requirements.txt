@@ -1,7 +1,7 @@
 numpy==1.17.2
 psycopg2_binary==2.8.3
 pandas==0.25.1
-lxml==4.2.1
+lxml==4.6.5
 requests==2.18.4
 environs==5.2.1
 psycopg2==2.8.3
